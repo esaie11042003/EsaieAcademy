@@ -1,0 +1,48 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h3>Acheter cette ressource</h3>
+            <p class="text-muted">{{ resource }}</p>
+            <p class="fs-4 fw-bold text-ea-gold">{{ prix }} FCFA</p>
+
+            {% if achat %}
+                <div class="alert alert-success">
+                    <p class="mb-2">
+                        Envoyez <strong>{{ prix }} FCFA</strong> via <strong>{{ achat.get_operateur_display }}</strong>
+                        au numéro <strong>{{ achat.numero_reception }}</strong>.
+                    </p>
+                    <p class="mb-2">Indiquez cette référence comme motif de votre transfert :</p>
+                    <h2 class="text-center my-3">{{ achat.reference_paiement }}</h2>
+                </div>
+                <p class="text-muted small">
+                    Une fois le paiement vérifié par notre équipe, l'accès sera débloqué automatiquement —
+                    vous pourrez alors télécharger et revenir consulter cette ressource à tout moment, sans repayer.
+                    En cas de problème, contactez l'assistance en précisant cette référence.
+                </p>
+                <a href="{% url 'monetisation:mes_achats' %}" class="btn btn-outline-primary w-100">Voir mes achats</a>
+
+            {% elif not comptes_actifs %}
+                <div class="alert alert-warning">
+                    Aucun numéro de réception n'est disponible actuellement. Contactez l'assistance.
+                </div>
+
+            {% else %}
+                <form method="post">
+                    {% csrf_token %}
+                    <p class="mb-2">Choisissez votre opérateur :</p>
+                    {% for c in comptes_actifs %}
+                        <div class="form-check mb-2">
+                            <input type="radio" name="operateur" value="{{ c.operateur }}" class="form-check-input" id="op_{{ c.operateur }}" required>
+                            <label class="form-check-label" for="op_{{ c.operateur }}">{{ c.get_operateur_display }}</label>
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary w-100 mt-3">Générer ma référence de paiement</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

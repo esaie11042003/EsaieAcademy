@@ -1,0 +1,59 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h3>Modifier « {{ document.title }} »</h3>
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Titre</label>
+                    <input type="text" name="title" class="form-control" value="{{ document.title }}">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Catégorie</label>
+                    <select name="category" class="form-select">
+                        {% for c in categories %}
+                            <option value="{{ c.id }}" {% if c.id == document.category_id %}selected{% endif %}>{{ c.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Type de document</label>
+                    <select name="document_type" class="form-select">
+                        {% for t in types %}
+                            <option value="{{ t.id }}" {% if t.id == document.document_type_id %}selected{% endif %}>{{ t.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Classe (optionnel)</label>
+                    <select name="classe" class="form-select">
+                        <option value="">---------</option>
+                        {% for c in classes %}
+                            <option value="{{ c.id }}" {% if c.id == document.classe_id %}selected{% endif %}>{{ c.nom }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Accès</label>
+                    <select name="access_type" class="form-select">
+                        <option value="free" {% if document.access_type == "free" %}selected{% endif %}>Gratuit</option>
+                        <option value="paid" {% if document.access_type == "paid" %}selected{% endif %}>Payant</option>
+                        <option value="premium" {% if document.access_type == "premium" %}selected{% endif %}>Réservé Premium</option>
+                        <option value="school" {% if document.access_type == "school" %}selected{% endif %}>Réservé aux établissements</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Prix (FCFA, si payant)</label>
+                    <input type="number" name="prix" class="form-control" value="{{ document.prix|default:'' }}">
+                </div>
+                <button type="submit" class="btn btn-primary">Enregistrer</button>
+                <a href="{% url 'documents:liste_documents' %}" class="btn btn-outline-secondary">Annuler</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

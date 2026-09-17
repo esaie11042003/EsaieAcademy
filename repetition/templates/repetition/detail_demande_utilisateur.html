@@ -1,0 +1,34 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <a href="{% url 'repetition:mes_demandes' %}" class="btn btn-outline-secondary btn-sm mb-3">Retour à mes demandes</a>
+
+    <h3>{{ demande.matiere }} — {{ demande.classe_enfant }}</h3>
+    <p class="text-muted">Statut : <strong>{{ demande.get_statut_display }}</strong></p>
+
+    {% if demande.rdv_date %}
+        <div class="alert alert-info">
+            Rendez-vous prévu le {{ demande.rdv_date|date:"d/m/Y à H:i" }} — {{ demande.rdv_lieu }}
+        </div>
+    {% endif %}
+
+    <h6 class="mt-4">Échanges</h6>
+    <div class="mb-3" style="max-height:400px; overflow-y:auto;">
+        {% for m in demande.messages.all %}
+            <div class="mb-2 p-2 border rounded {% if m.is_admin %}bg-light{% endif %}">
+                <div class="small text-muted">{% if m.is_admin %}L'établissement{% else %}Vous{% endif %} — {{ m.created_at|date:"d/m/Y H:i" }}</div>
+                <div>{{ m.contenu }}</div>
+            </div>
+        {% empty %}
+            <p class="text-muted">Aucun message pour l'instant.</p>
+        {% endfor %}
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ message_form.contenu }}
+        <button type="submit" class="btn btn-primary btn-sm mt-2">Envoyer</button>
+    </form>
+</div>
+{% endblock %}

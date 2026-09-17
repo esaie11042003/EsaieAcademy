@@ -1,0 +1,24 @@
+{% extends "portal/base.html" %}
+{% block content %}
+<div class="container py-5">
+    <h3>Corbeille — Épreuves</h3>
+    <table class="table table-bordered mt-4">
+        <thead><tr><th>Titre</th><th>Supprimée le</th><th>Jours restants</th><th>Actions</th></tr></thead>
+        <tbody>
+            {% for e in epreuves %}
+                <tr>
+                    <td>{{ e.classe.nom }} — {{ e.titre }}</td><td>{{ e.deleted_at }}</td><td>{{ e.jours_restants }}</td>
+                    <td>
+                        <form method="post" action="{% url 'banque:restaurer_epreuve' e.pk %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-success btn-sm">Restaurer</button>
+                        </form>
+                        <a href="{% url 'banque:supprimer_definitivement_epreuve' e.pk %}" class="btn btn-outline-danger btn-sm">Supprimer définitivement</a>
+                    </td>
+                </tr>
+            {% empty %}<tr><td colspan="4" class="text-muted">Corbeille vide.</td></tr>{% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'banque:liste_epreuves' %}" class="btn btn-outline-secondary">Retour</a>
+</div>
+{% endblock %}

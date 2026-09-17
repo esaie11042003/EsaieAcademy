@@ -1,0 +1,42 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <h3 class="mb-3">Code parent</h3>
+            <p class="text-muted">{{ eleve.prenom }} {{ eleve.nom }} — {{ eleve.classe.nom }}</p>
+
+            <div class="card p-4 mb-3">
+                <div class="display-6 fw-bold" style="letter-spacing: 4px;">{{ eleve.code_parent }}</div>
+            </div>
+
+            <p class="text-muted small">
+                Transmets ce code au(x) parent(s) de l'élève. Ils l'utiliseront depuis leur espace
+                ("Suivre un élève") pour voir ses notes et télécharger ses bulletins.
+                Un élève peut être suivi par 2 parents maximum.
+            </p>
+
+            <p class="text-muted small">
+                Parents déjà liés : {{ eleve.parents.count }} / 2
+                <ul class="list-unstyled">
+                    {% for parent in eleve.parents.all %}
+                        <li>{{ parent.get_full_name|default:parent.username }}</li>
+                    {% empty %}
+                        <li>Aucun parent lié pour l'instant.</li>
+                    {% endfor %}
+                </ul>
+            </p>
+
+            <form method="post" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-danger btn-sm"
+                        onclick="return confirm('Générer un nouveau code annule l\'ancien. Continuer ?');">
+                    Générer un nouveau code
+                </button>
+            </form>
+            <a href="{% url 'portal:dashboard' %}" class="btn btn-outline-secondary btn-sm">Retour</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

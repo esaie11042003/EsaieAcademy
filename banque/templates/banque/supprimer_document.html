@@ -1,0 +1,11 @@
+{% extends "portal/base.html" %}
+{% block content %}
+<div class="container py-5"><div class="row justify-content-center"><div class="col-md-6">
+    <h3>Supprimer « {{ document.titre }} »</h3>
+    <div class="alert alert-danger">Direction : la corbeille (30 jours).</div>
+    <form method="post">{% csrf_token %}
+        <button type="submit" class="btn btn-danger">Confirmer</button>
+        <a href="{% url 'banque:liste_documents_classe' %}" class="btn btn-outline-secondary">Annuler</a>
+    </form>
+</div></div></div>
+{% endblock %}

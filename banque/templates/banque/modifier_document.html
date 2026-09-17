@@ -1,0 +1,34 @@
+{% extends "portal/base.html" %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center"><div class="col-md-6">
+        <h3>Modifier « {{ document.titre }} »</h3>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3"><label class="form-label">Classe</label>
+                <select name="classe" class="form-select">
+                    {% for c in classes_list %}<option value="{{ c.id }}" {% if c.id == document.classe_id %}selected{% endif %}>{{ c.nom }}</option>{% endfor %}
+                </select>
+            </div>
+            <div class="mb-3"><label class="form-label">Titre</label><input type="text" name="titre" class="form-control" value="{{ document.titre }}"></div>
+            <div class="mb-3"><label class="form-label">Année</label><input type="number" name="annee" class="form-control" value="{{ document.annee }}"></div>
+
+            <div class="mb-3">
+                <label class="form-label">Fichier actuel</label>
+                {% if document.fichier %}
+                    <div><a href="{{ document.fichier.url }}" target="_blank">{{ document.fichier.name }}</a></div>
+                {% else %}
+                    <div class="text-muted">Aucun fichier.</div>
+                {% endif %}
+                <input type="file" name="fichier" class="form-control mt-1" accept="application/pdf">
+                <small class="text-muted">Laisser vide pour conserver le fichier actuel.</small>
+            </div>
+
+            <div class="form-check mb-3"><input type="checkbox" name="is_payant" class="form-check-input" {% if document.is_payant %}checked{% endif %}><label class="form-check-label">Payant</label></div>
+            <div class="mb-3"><label class="form-label">Prix (FCFA)</label><input type="number" name="prix" class="form-control" value="{{ document.prix|default:'' }}"></div>
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
+            <a href="{% url 'banque:liste_documents_classe' %}" class="btn btn-outline-secondary">Annuler</a>
+        </form>
+    </div></div>
+</div>
+{% endblock %}

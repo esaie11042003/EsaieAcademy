@@ -1,0 +1,311 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+
+<!-- BANNIÈRE -->
+<section class="hero text-white text-center py-5">
+    <div class="container py-5">
+        <h1 class="display-5 fw-bold mb-3">Toute l'éducation réunie sur une seule plateforme.</h1>
+        <p class="lead col-lg-8 mx-auto mb-4">
+            Gérez votre établissement, préparez vos concours et examens, consultez des ressources
+            pédagogiques, échangez avec des enseignants et suivez la scolarité de vos enfants.
+        </p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="#espaces" class="btn btn-light btn-lg">Explorer la plateforme</a>
+            <a href="{% url 'accounts:signup' %}" class="btn btn-gold btn-lg">Créer un compte</a>
+        </div>
+    </div>
+</section>
+
+<!-- GRANDS ESPACES -->
+<section id="espaces" class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Nos espaces</h2>
+        <div class="row g-4">
+
+            <!-- GESTION DES ÉTABLISSEMENTS -->
+            <div class="col-md-6 col-lg-4" id="etablissements">
+                {% if user.is_authenticated and user.role == "staff" %}
+                    <a href="{% url 'portal:dashboard' %}" class="text-decoration-none">
+                {% else %}
+                    <a href="{% url 'portal:choix_acces' %}?role=staff" class="text-decoration-none">
+                {% endif %}
+                    <div class="card card-espace h-100 shadow-sm p-3">
+                        <div class="card-body text-center">
+                            <div class="icon-wrap mx-auto mb-3">
+                                <i class="fa-solid fa-school fa-lg text-ea-gold"></i>
+                            </div>
+                            <h5 class="card-title text-dark">Gestion des établissements</h5>
+                            <p class="card-text small text-muted">
+                                Collèges, lycées, universités, centres de formation, écoles privées et publiques.
+                            </p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- PRÉPARATION DES CONCOURS -->
+            <div class="col-md-6 col-lg-4" id="concours">
+                <a href="{% url 'concours:liste_concours' %}" class="text-decoration-none">
+                    <div class="card card-espace h-100 shadow-sm p-3">
+                        <div class="card-body text-center">
+                            <div class="icon-wrap mx-auto mb-3">
+                                <i class="fa-solid fa-user-graduate fa-lg text-ea-gold"></i>
+                            </div>
+                            <h5 class="card-title text-dark">Préparation des concours</h5>
+                            <p class="card-text small text-muted">
+                                Police, Douane, ENA, ENS, INFAS, concours professionnels et bien d'autres.
+                            </p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- PRÉPARATION DES EXAMENS -->
+            <div class="col-md-6 col-lg-4" id="examens">
+                <a href="{% url 'examens:liste_examens' %}" class="text-decoration-none">
+                    <div class="card card-espace h-100 shadow-sm p-3">
+                        <div class="card-body text-center">
+                            <div class="icon-wrap mx-auto mb-3">
+                                <i class="fa-solid fa-pen-to-square fa-lg text-ea-gold"></i>
+                            </div>
+                            <h5 class="card-title text-dark">Préparation des examens</h5>
+                            <p class="card-text small text-muted">
+                                CEP, BEPC, BAC, BTS, Licence, Master, certifications diverses.
+                            </p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+    <a href="{% url 'banque:liste_epreuves' %}" class="text-decoration-none">
+        <div class="card card-espace h-100 shadow-sm p-3">
+            <div class="card-body text-center">
+                <div class="icon-wrap mx-auto mb-3">
+                    <i class="fa-solid fa-file-pen fa-lg text-ea-gold"></i>
+                </div>
+                <h5 class="card-title text-dark">Banque des épreuves</h5>
+                <p class="card-text small text-muted">Épreuves par classe et par année, avec corrigés.</p>
+            </div>
+        </div>
+    </a>
+</div>
+
+<div class="col-md-6 col-lg-4">
+    <a href="{% url 'banque:liste_documents_classe' %}" class="text-decoration-none">
+        <div class="card card-espace h-100 shadow-sm p-3">
+            <div class="card-body text-center">
+                <div class="icon-wrap mx-auto mb-3">
+                    <i class="fa-solid fa-folder-open fa-lg text-ea-gold"></i>
+                </div>
+                <h5 class="card-title text-dark">Banque des documents</h5>
+                <p class="card-text small text-muted">Documents pédagogiques classés par classe et année.</p>
+            </div>
+        </div>
+    </a>
+</div>
+
+            <!-- FORUM -->
+            <div class="col-md-6 col-lg-4" id="forum">
+                <a href="{% url 'forum:mes_forums' %}" class="text-decoration-none">
+                    <div class="card card-espace h-100 shadow-sm p-3">
+                        <div class="card-body text-center">
+                            <div class="icon-wrap mx-auto mb-3">
+                                <i class="fa-solid fa-comments fa-lg text-ea-gold"></i>
+                            </div>
+                            <h5 class="card-title text-dark">Forum</h5>
+                            <p class="card-text small text-muted">
+                                La communauté éducative d'Esaïe Academy, entraide et échanges.
+                            </p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- ESPACE PARENTS -->
+            <div class="col-md-6 col-lg-4">
+                {% if user.is_authenticated and user.role == "parent" %}
+                    <a href="{% url 'portal:dashboard' %}" class="text-decoration-none">
+                {% else %}
+                    <a href="{% url 'portal:choix_acces' %}?role=parent" class="text-decoration-none">
+                {% endif %}
+                    <div class="card card-espace h-100 shadow-sm p-3">
+                        <div class="card-body text-center">
+                            <div class="icon-wrap mx-auto mb-3">
+                                <i class="fa-solid fa-people-roof fa-lg text-ea-gold"></i>
+                            </div>
+                            <h5 class="card-title text-dark">Espace Parents</h5>
+                            <p class="card-text small text-muted">Suivi de la scolarité de vos enfants.</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- ESPACE ÉLÈVES -->
+            <div class="col-md-6 col-lg-4">
+                {% if user.is_authenticated and user.role == "student" %}
+                    <a href="{% url 'portal:dashboard' %}" class="text-decoration-none">
+                {% else %}
+                    <a href="{% url 'portal:choix_acces' %}?role=student" class="text-decoration-none">
+                {% endif %}
+                    <div class="card card-espace h-100 shadow-sm p-3">
+                        <div class="card-body text-center">
+                            <div class="icon-wrap mx-auto mb-3">
+                                <i class="fa-solid fa-user fa-lg text-ea-gold"></i>
+                            </div>
+                            <h5 class="card-title text-dark">Espace Élèves</h5>
+                            <p class="card-text small text-muted">Cours, devoirs et résultats.</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- ESPACE ENSEIGNANTS -->
+            <div class="col-md-6 col-lg-4">
+                {% if user.is_authenticated and user.role == "teacher" %}
+                    <a href="{% url 'teachers:mes_coordonnees' %}" class="text-decoration-none">
+                {% else %}
+                    <a href="{% url 'portal:choix_acces' %}?role=teacher" class="text-decoration-none">
+                {% endif %}
+                    <div class="card card-espace h-100 shadow-sm p-3">
+                        <div class="card-body text-center">
+                            <div class="icon-wrap mx-auto mb-3">
+                                <i class="fa-solid fa-chalkboard-user fa-lg text-ea-gold"></i>
+                            </div>
+                            <h5 class="card-title text-dark">Espace Enseignants</h5>
+                            <p class="card-text small text-muted">Gestion pédagogique complète.</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+            <!-- DEMANDE DE MAITRE D'ETUDE -->
+            <div class="col-md-6 col-lg-4">
+                <a href="{% url 'repetition:deposer_demande' %}" class="text-decoration-none">
+                    <div class="card card-espace h-100 shadow-sm p-3">
+                        <div class="card-body text-center">
+                            <div class="icon-wrap mx-auto mb-3">
+                                <i class="fa-solid fa-hand-holding-heart fa-lg text-ea-gold"></i>
+                            </div>
+                            <h5 class="card-title text-dark">Demande de Maître d'étude</h5>
+                            <p class="card-text small text-muted">Trouvez un répétiteur adapté à votre enfant, à tous les niveaux.</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+<!-- COMMENT SOUHAITEZ-VOUS UTILISER LA PLATEFORME -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-2">Comment souhaitez-vous utiliser Esaïe Academy ?</h2>
+        <p class="text-center text-muted mb-4">Cliquez sur votre objectif, on vous guide vers l'inscription adaptée.</p>
+
+        <div class="row g-3 col-lg-8 mx-auto">
+
+            <div class="col-md-6">
+                <a href="{% url 'portal:choix_acces' %}?role=staff" class="text-decoration-none">
+                    <div class="border rounded p-3 bg-white h-100 card-espace">
+                        <span class="text-dark">Gérer un établissement</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-md-6">
+                <a href="{% url 'portal:choix_acces' %}?role=teacher" class="text-decoration-none">
+                    <div class="border rounded p-3 bg-white h-100 card-espace">
+                        <span class="text-dark">Enseigner</span>
+                    </div>
+                </a>
+            </div>
+            
+
+            <div class="col-md-6">
+                <a href="{% url 'portal:choix_acces' %}?role=student" class="text-decoration-none">
+                    <div class="border rounded p-3 bg-white h-100 card-espace">
+                        <span class="text-dark">Étudier</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-md-6">
+                <a href="{% url 'concours:liste_concours' %}" class="text-decoration-none">
+                    <div class="border rounded p-3 bg-white h-100 card-espace">
+                        <span class="text-dark">Préparer un concours</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-md-6">
+                <a href="{% url 'examens:liste_examens' %}" class="text-decoration-none">
+                    <div class="border rounded p-3 bg-white h-100 card-espace">
+                        <span class="text-dark">Préparer un examen</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-md-6">
+                <a href="{% url 'documents:liste_documents' %}" class="text-decoration-none">
+                    <div class="border rounded p-3 bg-white h-100 card-espace">
+                        <span class="text-dark">Télécharger des documents</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-md-6">
+    <a href="{% url 'banque:liste_epreuves' %}" class="text-decoration-none">
+        <div class="border rounded p-3 bg-white h-100 card-espace">
+            <span class="text-dark">Télécharger des épreuves</span>
+        </div>
+    </a>
+</div>
+
+            <div class="col-md-6">
+                <a href="{% url 'portal:choix_acces' %}?role=parent" class="text-decoration-none">
+                    <div class="border rounded p-3 bg-white h-100 card-espace">
+                        <span class="text-dark">Suivre mon enfant</span>
+                    </div>
+                </a>
+            </div>
+            
+
+
+<div class="col-md-6">
+    {% if user.is_authenticated %}
+        <a href="{% url 'messagerie:inbox' %}" class="text-decoration-none">
+    {% else %}
+        <a href="{% url 'portal:choix_acces' %}" class="text-decoration-none">
+    {% endif %}
+        <div class="border rounded p-3 bg-white h-100 card-espace">
+            <span class="text-dark">Messagerie</span>
+        </div>
+    </a>
+</div>
+        </div>
+    </div>
+</section>
+
+
+<!-- TARIFS -->
+<section id="tarifs" class="py-5">
+    <div class="container text-center">
+        <h2 class="mb-4">Tarifs</h2>
+        <p class="text-muted">Formules Gratuit, Standard et Premium à venir.</p>
+    </div>
+</section>
+
+<!-- ASSISTANCE -->
+<section id="assistance" class="py-5 bg-light">
+    <div class="container text-center">
+        <h2 class="mb-4">Assistance</h2>
+        <p><i class="fa-solid fa-envelope"></i> contact@esaieacademy.com</p>
+    </div>
+</section>
+
+
+
+{% endblock %}

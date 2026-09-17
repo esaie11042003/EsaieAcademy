@@ -1,0 +1,79 @@
+{% extends "portal/base.html" %}
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Banque des documents</h2>
+        <div>
+            {% if user.is_authenticated %}
+                {% if user.role == "admin" %}
+                    <a href="{% url 'banque:documents_classe_desactives' %}" class="btn btn-outline-secondary me-2">Désactivés</a>
+                    <a href="{% url 'banque:corbeille_documents_classe' %}" class="btn btn-outline-dark me-2">Corbeille</a>
+                {% endif %}
+                {% if user.role == "staff" or user.role == "admin" %}
+                    <a href="{% url 'banque:ajouter_document_classe' %}" class="btn btn-primary">Ajouter un document</a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    <form method="get" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="q" class="form-control" placeholder="Rechercher..." value="{{ query }}">
+            <button type="submit" class="btn btn-outline-primary">Rechercher</button>
+        </div>
+    </form>
+    {% if query %}
+        <ul class="list-group">
+            {% for d in documents %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>{{ d.classe.nom }} — {{ d.titre }} ({{ d.annee }})</span>
+                    <span>
+                        {% if d.a_acces %}
+                            <a href="{% url 'banque:telecharger_document_classe' d.pk %}" class="btn btn-outline-primary btn-sm">Télécharger</a>
+                        {% else %}
+                            <span class="badge bg-warning text-dark">Payant — {{ d.prix }} FCFA</span>
+                            <a href="{% url 'monetisation:acheter' 'banque' 'documentclasse' d.pk %}" class="btn btn-primary btn-sm">Acheter</a>
+                        {% endif %}
+                        {% if user.is_authenticated and user.role == "admin" %}
+                            <a href="{% url 'banque:modifier_document_classe' d.pk %}" class="btn btn-outline-secondary btn-sm">Modifier</a>
+                            <form method="post" action="{% url 'banque:basculer_document_classe' d.pk %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-{% if d.is_active %}danger{% else %}success{% endif %} btn-sm">{% if d.is_active %}Désactiver{% else %}Réactiver{% endif %}</button>
+                            </form>
+                            <a href="{% url 'banque:supprimer_document_classe' d.pk %}" class="btn btn-outline-dark btn-sm">Supprimer</a>
+                        {% endif %}
+                    </span>
+                </li>
+            {% empty %}<li class="list-group-item text-muted">Aucun résultat.</li>{% endfor %}
+        </ul>
+    {% else %}
+        {% for classe in classes_list %}
+            <div class="mb-4">
+                <h4>{{ classe.nom }}</h4>
+                <ul class="list-group">
+                    {% for d in classe.documents_visibles %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>{{ d.titre }} ({{ d.annee }})</span>
+                            <span>
+                                {% if d.a_acces %}
+                                    <a href="{% url 'banque:telecharger_document_classe' d.pk %}" class="btn btn-outline-primary btn-sm">Télécharger</a>
+                                {% else %}
+                                    <span class="badge bg-warning text-dark">Payant — {{ d.prix }} FCFA</span>
+                                    <a href="{% url 'monetisation:acheter' 'banque' 'documentclasse' d.pk %}" class="btn btn-primary btn-sm">Acheter</a>
+                                {% endif %}
+                                {% if user.is_authenticated and user.role == "admin" %}
+                                    <a href="{% url 'banque:modifier_document_classe' d.pk %}" class="btn btn-outline-secondary btn-sm">Modifier</a>
+                                    <form method="post" action="{% url 'banque:basculer_document_classe' d.pk %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-outline-{% if d.is_active %}danger{% else %}success{% endif %} btn-sm">{% if d.is_active %}Désactiver{% else %}Réactiver{% endif %}</button>
+                                    </form>
+                                    <a href="{% url 'banque:supprimer_document_classe' d.pk %}" class="btn btn-outline-dark btn-sm">Supprimer</a>
+                                {% endif %}
+                            </span>
+                        </li>
+                    {% empty %}<li class="list-group-item text-muted">Aucun document.</li>{% endfor %}
+                </ul>
+            </div>
+        {% empty %}<p class="text-muted">Aucune classe pour l'instant.</p>{% endfor %}
+    {% endif %}
+</div>
+{% endblock %}

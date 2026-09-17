@@ -1,0 +1,29 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <h3>Épreuves désactivées</h3>
+
+    <table class="table table-bordered mt-4">
+        <thead>
+            <tr><th>Titre</th><th>Examen</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+            {% for e in epreuves %}
+                <tr>
+                    <td>{{ e.titre }}</td>
+                    <td>{{ e.examen.nom }}</td>
+                    <td>
+                        <a href="{% url 'examens:basculer_epreuve' e.pk %}" class="btn btn-outline-success btn-sm">Réactiver</a>
+                        <a href="{% url 'examens:supprimer_epreuve' e.pk %}" class="btn btn-outline-danger btn-sm">Mettre à la corbeille</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="3" class="text-muted">Aucune épreuve désactivée.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{% url 'examens:liste_examens' %}" class="btn btn-outline-secondary">Retour</a>
+</div>
+{% endblock %}

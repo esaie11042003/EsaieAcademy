@@ -1,0 +1,72 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Banque de documents</h2>
+        <div>
+            {% if user.is_authenticated and user.role == "admin" %}
+                <a href="{% url 'documents:documents_desactives' %}" class="btn btn-outline-secondary me-2">Désactivés</a>
+                <a href="{% url 'documents:corbeille' %}" class="btn btn-outline-dark me-2">Corbeille</a>
+                <a href="{% url 'documents:ajouter_document' %}" class="btn btn-primary">Ajouter un document</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <form method="get" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="q" class="form-control" placeholder="Rechercher un document..." value="{{ query }}">
+            <button type="submit" class="btn btn-outline-primary">Rechercher</button>
+        </div>
+    </form>
+
+    <div class="row g-3">
+        {% for doc in documents %}
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h6 class="card-title">{{ doc.title }}</h6>
+                        <p class="text-muted small mb-1">{{ doc.category.name }} — {{ doc.document_type.name }}</p>
+
+                        {% if not doc.published %}
+                            <span class="badge bg-secondary mb-2">Désactivé</span>
+                        {% endif %}
+
+                        <p class="small">{{ doc.short_description }}</p>
+
+                        {% if doc.a_acces and doc.published %}
+                            {% for f in doc.files.all %}
+                                {% if f.is_main_file %}
+                                    <a href="{% url 'documents:telecharger' doc.pk f.pk %}" class="btn btn-outline-primary btn-sm">Sujet</a>
+                                {% else %}
+                                    <a href="{% url 'documents:telecharger' doc.pk f.pk %}" class="btn btn-outline-success btn-sm">Corrigé</a>
+                                {% endif %}
+                            {% endfor %}
+                        {% elif doc.published %}
+                            <span class="badge bg-warning text-dark">Payant — {{ doc.prix }} FCFA</span>
+                            <a href="{% url 'monetisation:acheter' 'documents' 'document' doc.pk %}" class="btn btn-primary btn-sm">Acheter</a>
+                        {% endif %}
+
+                        {% if user.is_authenticated and user.role == "admin" and doc.category.code in "TD,DEVOIR,INTERROGATION" %}
+                            <div class="mt-2">
+                                <a href="{% url 'documents:gerer_corrige' doc.pk %}" class="btn btn-outline-secondary btn-sm">Gérer le corrigé</a>
+                            </div>
+                        {% endif %}
+
+        {% if user.is_authenticated and user.role == "admin" %}
+    <div class="mt-2">
+        <a href="{% url 'documents:modifier_document' doc.pk %}" class="btn btn-outline-secondary btn-sm">Modifier</a>
+        {% if doc.published %}
+            <a href="{% url 'documents:basculer_document' doc.pk %}" class="btn btn-outline-danger btn-sm">Désactiver</a>
+        {% else %}
+            <a href="{% url 'documents:basculer_document' doc.pk %}" class="btn btn-outline-success btn-sm">Réactiver</a>
+        {% endif %}
+        <a href="{% url 'documents:supprimer_document' doc.pk %}" class="btn btn-outline-dark btn-sm">Supprimer</a>
+    </div>
+{% endif %}
+            </div>
+        {% empty %}
+            <p class="text-muted">Aucun document pour l'instant.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

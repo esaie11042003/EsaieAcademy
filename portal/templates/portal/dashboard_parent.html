@@ -1,0 +1,29 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <h2>Tableau de bord — Parent</h2>
+    <p>Bienvenue, {{ user.get_full_name|default:user.username }} !</p>
+
+    <a href="{% url 'students:lier_parent' %}" class="btn btn-primary mb-4">Suivre un élève</a>
+
+    <h5>Mes enfants ({{ enfants.count }})</h5>
+    <div class="row g-3">
+        {% for enfant in enfants %}
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h6 class="card-title">{{ enfant.prenom }} {{ enfant.nom }}</h6>
+                        <p class="card-text text-muted small mb-2">{{ enfant.classe.nom }}</p>
+                        <a href="{% url 'results:bulletins_enfant' enfant.pk %}" class="btn btn-outline-primary btn-sm">
+                            Voir ses bulletins
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-muted">Aucun élève suivi pour l'instant. Utilise le code fourni par l'établissement.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

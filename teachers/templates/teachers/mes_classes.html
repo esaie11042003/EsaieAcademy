@@ -1,0 +1,17 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <h3>Mes classes — {{ school.nom }}</h3>
+
+    <ul class="list-group">
+        {% for c in classes %}
+            <li class="list-group-item">{{ c.nom }}</li>
+        {% empty %}
+            <li class="list-group-item text-muted">Aucune classe assignée dans cet établissement pour l'instant.</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{% url 'teachers:mes_ecoles' %}" class="btn btn-outline-secondary mt-3">Retour à mes établissements</a>
+</div>
+{% endblock %}

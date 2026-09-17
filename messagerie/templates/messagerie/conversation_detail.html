@@ -1,0 +1,36 @@
+{% extends "portal/base.html" %}
+{% block content %}
+<div class="container py-5">
+    <h3>{{ label }}</h3>
+
+    <div class="border rounded p-3 mb-3" style="max-height: 400px; overflow-y: auto;">
+        {% for m in messages_liste %}
+            <div class="mb-3 {% if m.sender == user %}text-end{% endif %}">
+                <div class="d-inline-block p-2 rounded {% if m.sender == user %}bg-primary text-white{% else %}bg-light{% endif %}" style="max-width: 70%;">
+                    <div class="small fw-bold">{{ m.sender.get_full_name|default:m.sender.username }}</div>
+                    {% if m.body %}<div>{{ m.body }}</div>{% endif %}
+                    {% if m.fichier %}
+                        {% if m.est_image %}
+                            <img src="{{ m.fichier.url }}" class="img-fluid rounded mt-1" style="max-height: 200px;">
+                        {% else %}
+                            <a href="{{ m.fichier.url }}" target="_blank" class="d-block mt-1">📎 Fichier joint</a>
+                        {% endif %}
+                    {% endif %}
+                    <div class="small text-muted">{{ m.created_at }}</div>
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-muted">Aucun message pour l'instant. Écrivez le premier ci-dessous.</p>
+        {% endfor %}
+    </div>
+
+    <h6>Répondre</h6>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-2">{{ form.body }}</div>
+        <div class="mb-2">{{ form.fichier }}</div>
+        <button type="submit" class="btn btn-primary">Envoyer</button>
+        <a href="{% url 'messagerie:inbox' %}" class="btn btn-outline-secondary">Retour</a>
+    </form>
+</div>
+{% endblock %}

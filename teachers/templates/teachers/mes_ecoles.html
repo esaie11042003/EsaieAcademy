@@ -1,0 +1,23 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <h3>Mes établissements</h3>
+
+    <div class="row g-3 mt-2">
+        {% for a in acces %}
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h6 class="card-title">{{ a.school.nom }}</h6>
+                        <p class="card-text text-muted small">{{ a.school.ville }}</p>
+                        <a href="{% url 'teachers:entrer_ecole' a.school.pk %}" class="btn btn-primary btn-sm">Entrer</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-muted">Vous n'êtes rattaché à aucun établissement pour l'instant.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

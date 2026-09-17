@@ -1,0 +1,52 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h3>Modifier « {{ classe.nom }} »</h3>
+
+            {% if form.errors %}
+                <div class="alert alert-danger">Veuillez corriger les erreurs ci-dessous.</div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Nom de la classe</label>
+                    {{ form.nom }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Matières enseignées</label>
+                    {{ form.matieres }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Professeur Principal</label>
+                    {{ form.professeur_principal }}
+                    <div class="form-text">Son nom apparaîtra sur les bulletins de cette classe.</div>
+                </div>
+
+                <hr>
+                <p class="text-muted small mb-2">
+                    Couleur et bordure du bulletin de cette classe.
+                </p>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Couleur du bulletin</label>
+                        {{ form.couleur_bulletin }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Style de bordure</label>
+                        {{ form.style_bordure }}
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Enregistrer</button>
+                <a href="{% url 'classes:creer_classe' %}" class="btn btn-outline-secondary">Annuler</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Créer une année scolaire</h3>
+
+            {% if form.errors %}
+                <div class="alert alert-danger">Veuillez corriger les erreurs ci-dessous.</div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Nom (ex : 2026-2027)</label>
+                    {{ form.nom }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Date de début</label>
+                    {{ form.date_debut }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Date de fin</label>
+                    {{ form.date_fin }}
+                </div>
+                <div class="form-check mb-3">
+                    {{ form.active }}
+                    <label class="form-check-label">Année active</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Créer</button>
+            </form>
+        </div>
+
+        <div class="col-md-6">
+            <h5>Années existantes ({{ annees.count }})</h5>
+            <ul class="list-group">
+                {% for a in annees %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>
+                            {{ a.nom }}
+                            {% if a.active %}<span class="badge bg-success ms-2">Active</span>{% endif %}
+                        </span>
+                        <span>
+                            <a href="{% url 'school:modifier_annee' a.pk %}" class="btn btn-outline-secondary btn-sm">Modifier</a>
+                            {% if not a.active %}
+                                <a href="{% url 'school:activer_annee' a.pk %}" class="btn btn-outline-success btn-sm">Activer</a>
+                            {% endif %}
+                        </span>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item text-muted">Aucune année pour l'instant.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

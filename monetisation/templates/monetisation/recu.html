@@ -1,0 +1,22 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card p-4">
+                <h4 class="text-center mb-4">Reçu de paiement</h4>
+                <p><strong>Ressource :</strong> {{ achat.resource }}</p>
+                <p><strong>Montant :</strong> {{ achat.montant }} FCFA</p>
+                <p><strong>Opérateur :</strong> {{ achat.get_operateur_display }}</p>
+                <p><strong>Référence :</strong> {{ achat.reference_paiement }}</p>
+                <p><strong>Acheté par :</strong> {{ achat.acheteur.get_full_name|default:achat.acheteur.username }}</p>
+                <p><strong>Validé le :</strong> {{ achat.validated_at }}</p>
+                <hr>
+                <p class="text-center text-muted small mb-0">Esaïe Academy – Dieu Pourvoira</p>
+            </div>
+            <a href="{% url 'monetisation:mes_achats' %}" class="btn btn-outline-secondary mt-3">Retour à mes achats</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

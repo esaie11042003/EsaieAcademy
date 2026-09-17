@@ -1,0 +1,52 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Ajouter un élève</h3>
+            <p class="text-muted">Établissement : <strong>{{ school.nom }}</strong></p>
+            <a href="{% url 'students:inscrire_eleve' %}" class="btn btn-outline-primary btn-sm mb-3">
+                L'élève n'a pas de compte ? L'inscrire directement
+            </a>
+
+            {% if form.errors %}
+                <div class="alert alert-danger">Veuillez corriger les erreurs ci-dessous.</div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    {{ form.identifiant.label_tag }}
+                    {{ form.identifiant }}
+                </div>
+                <div class="mb-3">
+                    {{ form.matricule.label_tag }}
+                    {{ form.matricule }}
+                </div>
+                <div class="mb-3">
+                    {{ form.classe.label_tag }}
+                    {{ form.classe }}
+                </div>
+                <button type="submit" class="btn btn-primary">Ajouter</button>
+            </form>
+        </div>
+
+        <div class="col-md-6">
+            <h5>Élèves de l'établissement ({{ eleves.count }})</h5>
+            <ul class="list-group">
+                {% for e in eleves %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>{{ e.prenom }} {{ e.nom }}</span>
+                        <span class="text-muted small">{{ e.classe.nom }} — {{ e.matricule }}</span>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item text-muted">Aucun élève pour l'instant.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,111 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h3 class="mb-4">Modifier mon établissement</h3>
+
+            {% if form.errors %}
+                <div class="alert alert-danger">Veuillez corriger les erreurs ci-dessous.</div>
+            {% endif %}
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Nom de l'établissement</label>
+                        {{ form.nom }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Sigle</label>
+                        {{ form.sigle }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Type d'établissement</label>
+                        {{ form.type_etablissement }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Devise de l'établissement</label>
+                        {{ form.devise }}
+                    </div>
+                </div>
+
+                <hr class="my-4">
+                <h5>Logo et cachet</h5>
+                <p class="text-muted small">
+                    Ces images apparaîtront automatiquement sur les bulletins de notes générés par la plateforme.
+                </p>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Logo de l'établissement</label>
+                        {% if school.logo %}
+                            <div class="mb-2"><img src="{{ school.logo.url }}" style="height:60px;" alt="Logo actuel"></div>
+                        {% endif %}
+                        {{ form.logo }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Cachet / Tampon</label>
+                        {% if school.cachet %}
+                            <div class="mb-2"><img src="{{ school.cachet.url }}" style="height:60px;" alt="Cachet actuel"></div>
+                        {% endif %}
+                        {{ form.cachet }}
+                    </div>
+                </div>
+
+                <hr class="my-4">
+                <h5>Coordonnées</h5>
+
+                <div class="mb-3">
+                    <label class="form-label">Adresse (ex : BP 09 Godomey)</label>
+                    {{ form.adresse }}
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Ville</label>
+                        {{ form.ville }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Email</label>
+                        {{ form.email }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Téléphone</label>
+                        {{ form.telephone }}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Téléphone secondaire</label>
+                        {{ form.telephone_secondaire }}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">WhatsApp</label>
+                        {{ form.whatsapp }}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Site web</label>
+                    {{ form.site_web }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    {{ form.description }}
+                </div>
+
+                <button type="submit" class="btn btn-primary">Enregistrer</button>
+                <a href="{% url 'portal:dashboard' %}" class="btn btn-outline-secondary">Annuler</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

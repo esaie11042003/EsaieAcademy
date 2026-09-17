@@ -1,0 +1,21 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h3>Corrigé — {{ document.title }}</h3>
+            <p class="text-muted">Ajoutez ou remplacez le corrigé à tout moment.</p>
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <input type="file" name="fichier_corrige" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-primary">Enregistrer</button>
+                <a href="{% url 'documents:liste_documents' %}" class="btn btn-outline-secondary">Retour</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

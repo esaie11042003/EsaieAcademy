@@ -1,0 +1,95 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <h2>Tableau de bord — Personnel</h2>
+    <p>Bienvenue, {{ user.get_full_name|default:user.username }} !</p>
+
+    {% if not school_staff %}
+        <div class="alert alert-info mt-4">
+            Vous n'êtes rattaché à aucun établissement pour l'instant.
+        </div>
+        <a href="{% url 'configuration:creer_etablissement' %}" class="btn btn-primary">Créer mon établissement</a>
+
+    {% else %}
+
+        <div class="card mb-4 mt-4">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-3">
+                    {% if school.logo %}
+                        <img src="{{ school.logo.url }}" alt="Logo" style="height:50px;">
+                    {% endif %}
+                    <div>
+                        <h5 class="card-title mb-1">{{ school.nom }}</h5>
+                        <p class="card-text text-muted mb-1">{{ school.get_type_etablissement_display }} — {{ school.ville }}</p>
+                        <p class="card-text mb-0">Votre fonction : <strong>{{ school_staff.role.nom }}</strong></p>
+                    </div>
+                </div>
+                <a href="{% url 'configuration:modifier_etablissement' %}" class="btn btn-outline-primary btn-sm">
+                    Modifier mon établissement
+                </a>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <a href="{% url 'classes:creer_classe' %}" class="btn btn-primary me-2">Gérer les classes</a>
+            <a href="{% url 'teachers:gerer_enseignants' %}" class="btn btn-primary me-2">Gérer les enseignants</a>
+            <a href="{% url 'configuration:gerer_administration' %}" class="btn btn-primary me-2">Gérer l'administration</a>
+            <a href="{% url 'students:gerer_eleves' %}" class="btn btn-primary me-2">Gérer les élèves</a>
+            <a href="{% url 'school:gerer_annees' %}" class="btn btn-secondary me-2">Années scolaires</a>
+
+            <a href="{% url 'school:gerer_periodes' %}" class="btn btn-secondary me-2">Périodes</a>
+            <a href="{% url 'evaluations:suivi_ecole' %}" class="btn btn-secondary me-2">Suivi des notes</a>
+            <a href="{% url 'results:choisir_resultats' %}" class="btn btn-secondary me-2">Résultats & Bulletins</a>
+
+            <a href="{% url 'assignments:gerer_affectations' %}" class="btn btn-secondary me-2">Affectations</a>
+            <a href="{% url 'subjects:gerer_matieres' %}" class="btn btn-secondary">Matières</a>
+
+        </div>
+
+        <div class="row g-4">
+
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <strong>Administration</strong> ({{ administration.count }})
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        {% for membre in administration %}
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>{{ membre.user.get_full_name|default:membre.user.username }}</span>
+                                <span class="text-muted small">{{ membre.role.nom }}</span>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item text-muted">Aucun membre pour l'instant.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <strong>Élèves</strong> ({{ eleves.count }})
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        {% for eleve in eleves %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>{{ eleve.prenom }} {{ eleve.nom }} <span class="text-muted small">({{ eleve.classe.nom }})</span></span>
+                                <span>
+                                    <a href="{% url 'students:modifier_eleve' eleve.pk %}" class="btn btn-outline-secondary btn-sm">Modifier</a>
+                                    <a href="{% url 'students:code_parent' eleve.pk %}" class="btn btn-outline-primary btn-sm">Code parent</a>
+                                </span>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item text-muted">Aucun élève enregistré pour l'instant.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+    {% endif %}
+</div>
+{% endblock %}

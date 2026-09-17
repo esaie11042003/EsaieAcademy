@@ -1,0 +1,36 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <h3>Corbeille — Documents</h3>
+    <p class="text-muted">Les éléments sont supprimés définitivement 30 jours après leur mise à la corbeille.</p>
+
+    <table class="table table-bordered mt-4">
+        <thead>
+            <tr>
+                <th>Titre</th>
+                <th>Supprimé le</th>
+                <th>Jours restants</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for doc in documents %}
+                <tr>
+                    <td>{{ doc.title }}</td>
+                    <td>{{ doc.deleted_at }}</td>
+                    <td>{{ doc.jours_restants }} jour(s)</td>
+                    <td>
+                        <a href="{% url 'documents:restaurer_document' doc.pk %}" class="btn btn-outline-success btn-sm">Restaurer</a>
+                        <a href="{% url 'documents:supprimer_definitivement' doc.pk %}" class="btn btn-outline-danger btn-sm">Supprimer définitivement</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="4" class="text-muted">Corbeille vide.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{% url 'documents:liste_documents' %}" class="btn btn-outline-secondary">Retour</a>
+</div>
+{% endblock %}

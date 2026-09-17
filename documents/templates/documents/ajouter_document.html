@@ -1,0 +1,90 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <h3>Ajouter un document</h3>
+
+            {% if form.errors %}
+                <div class="alert alert-danger">Veuillez corriger les erreurs ci-dessous.</div>
+            {% endif %}
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Titre</label>
+                    {{ form.title }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Catégorie</label>
+                    {{ form.category }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Type de document</label>
+                    {{ form.document_type }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Matière (optionnel)</label>
+                    {{ form.subject }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Classe (optionnel)</label>
+                    {{ form.classe }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Niveau</label>
+                    {{ form.level }}
+                </div>
+                                <div class="mb-3">
+                    <label class="form-label">Accès</label>
+                    {{ form.access_type }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Prix (FCFA, si payant)</label>
+                    {{ form.prix }}
+                </div>
+           
+                <div class="mb-3">
+                    <label class="form-label">Description courte</label>
+                    {{ form.short_description }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Description complète</label>
+                    {{ form.description }}
+                </div>
+                
+                <a href="{% url 'documents:liste_documents' %}" class="btn btn-outline-secondary">Annuler</a>
+                <div class="mb-3">
+                    <label class="form-label">Fichier (sujet)</label>
+                    {{ form.fichier }}
+                </div>
+                <div class="mb-3" id="bloc-corrige" style="display: none;">
+                    <label class="form-label">{{ form.fichier_corrige.label }}</label>
+                    {{ form.fichier_corrige }}
+                </div>
+                <button type="submit" class="btn btn-primary">Ajouter</button>
+        </div>
+    </div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const categorieSelect = document.querySelector("#id_category");
+    const blocCorrige = document.querySelector("#bloc-corrige");
+    const categoriesAvecCorrige = ["TD", "DEVOIR", "INTERROGATION"];
+
+    function toggleCorrige() {
+        const texteChoisi = categorieSelect.options[categorieSelect.selectedIndex].text.trim().toUpperCase();
+        const correspond = categoriesAvecCorrige.some(function (code) {
+            return texteChoisi.includes(code) || texteChoisi.includes("TD") || texteChoisi.includes("DEVOIR") || texteChoisi.includes("INTERROGATION");
+        });
+        blocCorrige.style.display = correspond ? "block" : "none";
+    }
+
+    if (categorieSelect) {
+        categorieSelect.addEventListener("change", toggleCorrige);
+        toggleCorrige();
+    }
+});
+</script>
+{% endblock %}

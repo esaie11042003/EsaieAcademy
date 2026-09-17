@@ -1,0 +1,38 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <a href="{% url 'forum:mes_forums' %}" class="btn btn-outline-secondary btn-sm mb-3">Retour</a>
+
+    <h3>{{ forum.nom }}</h3>
+    {% if forum.description %}<p class="text-muted">{{ forum.description }}</p>{% endif %}
+
+    <div class="border rounded p-3 mb-3" style="max-height: 450px; overflow-y: auto;">
+        {% for m in messages_liste %}
+            <div class="mb-3 {% if m.auteur == user %}text-end{% endif %}">
+                <div class="d-inline-block p-2 rounded {% if m.auteur == user %}bg-primary text-white{% else %}bg-light{% endif %}" style="max-width: 70%;">
+                    <div class="small fw-bold">{{ m.auteur.get_full_name|default:m.auteur.username }}</div>
+                    {% if m.contenu %}<div>{{ m.contenu }}</div>{% endif %}
+                    {% if m.fichier %}
+                        {% if m.est_image %}
+                            <img src="{{ m.fichier.url }}" class="img-fluid rounded mt-1" style="max-height: 200px;">
+                        {% else %}
+                            <a href="{{ m.fichier.url }}" target="_blank" class="d-block mt-1">📎 Fichier joint</a>
+                        {% endif %}
+                    {% endif %}
+                    <div class="small text-muted">{{ m.created_at|date:"d/m/Y H:i" }}</div>
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-muted">Aucun message pour l'instant. Écrivez le premier ci-dessous.</p>
+        {% endfor %}
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-2">{{ form.contenu }}</div>
+        <div class="mb-2">{{ form.fichier }}</div>
+        <button type="submit" class="btn btn-primary">Envoyer</button>
+    </form>
+</div>
+{% endblock %}

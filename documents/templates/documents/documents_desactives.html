@@ -1,0 +1,33 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <h3>Documents désactivés</h3>
+
+    <table class="table table-bordered mt-4">
+        <thead>
+            <tr>
+                <th>Titre</th>
+                <th>Catégorie</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for doc in documents %}
+                <tr>
+                    <td>{{ doc.title }}</td>
+                    <td>{{ doc.category.name }}</td>
+                    <td>
+                        <a href="{% url 'documents:basculer_document' doc.pk %}" class="btn btn-outline-success btn-sm">Réactiver</a>
+                        <a href="{% url 'documents:supprimer_document' doc.pk %}" class="btn btn-outline-danger btn-sm">Mettre à la corbeille</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="3" class="text-muted">Aucun document désactivé.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{% url 'documents:liste_documents' %}" class="btn btn-outline-secondary">Retour</a>
+</div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h3>Supprimer la note de {{ note.eleve.prenom }} {{ note.eleve.nom }}</h3>
+            <p class="text-muted">Note actuelle : {{ note.note }}</p>
+
+            {% if form.errors %}
+                <div class="alert alert-danger">Veuillez indiquer une raison.</div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Raison de la suppression</label>
+                    {{ form.raison }}
+                </div>
+                <button type="submit" class="btn btn-danger">Confirmer la suppression</button>
+                <a href="{% url 'evaluations:liste_notes' note.evaluation.pk %}" class="btn btn-outline-secondary">Annuler</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

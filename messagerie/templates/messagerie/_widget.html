@@ -1,0 +1,19 @@
+{% if msg_recents %}
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <strong>Messages récents</strong>
+        {% if msg_non_lus_total %}<span class="badge bg-danger">{{ msg_non_lus_total }} non lu(s)</span>{% endif %}
+    </div>
+    <ul class="list-group list-group-flush">
+        {% for item in msg_recents %}
+            <a href="{% url 'messagerie:conversation_detail' item.conversation.pk %}" class="list-group-item list-group-item-action {% if item.non_lu %}fw-bold{% endif %}">
+                {{ item.dernier.sender.get_full_name|default:item.dernier.sender.username }} :
+                {{ item.dernier.body|default:"[Fichier joint]"|truncatechars:50 }}
+            </a>
+        {% endfor %}
+    </ul>
+    <div class="card-footer">
+        <a href="{% url 'messagerie:inbox' %}" class="btn btn-sm btn-outline-primary">Voir tous les messages</a>
+    </div>
+</div>
+{% endif %}

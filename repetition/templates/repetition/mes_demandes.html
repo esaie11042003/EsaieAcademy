@@ -1,0 +1,23 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <h3>Mes demandes de Maître d'étude</h3>
+
+    <div class="list-group">
+        {% for d in demandes %}
+            <a href="{% url 'repetition:suivre_fil_utilisateur' d.pk %}" class="list-group-item list-group-item-action">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <strong>{{ d.matiere }}</strong> — {{ d.classe_enfant }}
+                        <div class="small text-muted">Envoyée le {{ d.created_at|date:"d/m/Y" }}</div>
+                    </div>
+                    <span class="badge bg-secondary align-self-center">{{ d.get_statut_display }}</span>
+                </div>
+            </a>
+        {% empty %}
+            <p class="text-muted">Vous n'avez pas encore fait de demande. <a href="{% url 'repetition:deposer_demande' %}">En créer une</a>.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="alert alert-info">
+        Vue en lecture seule — vous ne pouvez rien modifier ici. Seule l'école gère ses propres données.
+    </div>
+
+    <h2>{{ school.nom }}</h2>
+    <p class="text-muted">{{ school.get_type_etablissement_display }} — {{ school.ville }}</p>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-3 col-6">
+            <div class="card text-center p-3">
+                <h4>{{ classes.count }}</h4>
+                <p class="text-muted small mb-0">Classes</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card text-center p-3">
+                <h4>{{ eleves.count }}</h4>
+                <p class="text-muted small mb-0">Élèves</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card text-center p-3">
+                <h4>{{ enseignants.count }}</h4>
+                <p class="text-muted small mb-0">Enseignants</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card text-center p-3">
+                <h4>{{ nb_evaluations }}</h4>
+                <p class="text-muted small mb-0">Évaluations créées</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h5>Classes</h5>
+            <ul class="list-group mb-4">
+                {% for c in classes %}
+                    <li class="list-group-item">
+                        {{ c.nom }}
+                        <span class="text-muted small">
+                            ({% for m in c.matieres.all %}{{ m.nom }}{% if not forloop.last %}, {% endif %}{% endfor %})
+                        </span>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item text-muted">Aucune classe.</li>
+                {% endfor %}
+            </ul>
+
+            <h5>Administration</h5>
+            <ul class="list-group mb-4">
+                {% for a in administration %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>{{ a.user.get_full_name|default:a.user.username }}</span>
+                        <span class="text-muted small">{{ a.role.nom }}</span>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item text-muted">Aucun membre.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="col-md-6">
+            <h5>Enseignants</h5>
+            <ul class="list-group mb-4">
+                {% for a in enseignants %}
+                    <li class="list-group-item">{{ a.teacher.user.get_full_name|default:a.teacher.user.username }}</li>
+                {% empty %}
+                    <li class="list-group-item text-muted">Aucun enseignant.</li>
+                {% endfor %}
+            </ul>
+
+            <h5>Matières enseignées</h5>
+            <ul class="list-group mb-4">
+                {% for m in matieres %}
+                    <li class="list-group-item">{{ m.nom }}</li>
+                {% empty %}
+                    <li class="list-group-item text-muted">Aucune matière.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <h5>Dernières évaluations créées</h5>
+    <ul class="list-group mb-4">
+        {% for e in dernieres_evaluations %}
+            <li class="list-group-item">
+                {{ e.get_evaluation_type_display }} {{ e.numero }} — {{ e.assignment.subject.nom }}
+                ({{ e.assignment.classe.nom }}) — {{ e.date }}
+            </li>
+        {% empty %}
+            <li class="list-group-item text-muted">Aucune évaluation.</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{% url 'platform_admin:gerer_etablissements' %}" class="btn btn-outline-secondary">Retour</a>
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "portal/base.html" %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center"><div class="col-md-6">
+        <h3>Nouvelle conversation</h3>
+        <p class="text-muted">Tapez un nom, les suggestions apparaissent automatiquement.</p>
+
+        {% if form.errors %}
+            <div class="alert alert-danger">Aucun compte trouvé avec cet identifiant.</div>
+        {% endif %}
+
+        <form method="post" id="form-nouvelle-conv">
+            {% csrf_token %}
+            <div class="mb-3 position-relative">
+                <input type="text" id="recherche" class="form-control" placeholder="Ex : Dine, Pierre..." autocomplete="off">
+                <div id="suggestions" class="list-group position-absolute w-100" style="z-index: 1000;"></div>
+            </div>
+            <input type="hidden" name="identifiant" id="identifiant_choisi">
+            <button type="submit" class="btn btn-primary" id="btn-valider" disabled>Démarrer la conversation</button>
+            <a href="{% url 'messagerie:inbox' %}" class="btn btn-outline-secondary">Annuler</a>
+        </form>
+    </div></div>
+</div>
+
+<script>
+const champRecherche = document.getElementById("recherche");
+const suggestionsDiv = document.getElementById("suggestions");
+const champIdentifiant = document.getElementById("identifiant_choisi");
+const btnValider = document.getElementById("btn-valider");
+
+champRecherche.addEventListener("input", function () {
+    const terme = this.value.trim();
+    champIdentifiant.value = "";
+    btnValider.disabled = true;
+
+    if (terme.length < 1) {
+        suggestionsDiv.innerHTML = "";
+        return;
+    }
+
+    fetch("{% url 'messagerie:rechercher_utilisateurs' %}?q=" + encodeURIComponent(terme))
+        .then(response => response.json())
+        .then(data => {
+            suggestionsDiv.innerHTML = "";
+            data.resultats.forEach(function (u) {
+                const item = document.createElement("button");
+                item.type = "button";
+                item.className = "list-group-item list-group-item-action";
+                item.innerHTML = "<strong>" + u.nom + "</strong> <span class='text-muted small'>(" + u.role + ")</span>";
+                item.addEventListener("click", function () {
+                    champRecherche.value = u.nom;
+                    champIdentifiant.value = u.username;
+                    suggestionsDiv.innerHTML = "";
+                    btnValider.disabled = false;
+                });
+                suggestionsDiv.appendChild(item);
+            });
+        });
+});
+</script>
+{% endblock %}

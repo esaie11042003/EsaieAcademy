@@ -1,0 +1,36 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <h3>Demandes de Maître d'étude</h3>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Contact</th>
+                <th>Matière</th>
+                <th>Classe</th>
+                <th>Zone</th>
+                <th>Statut</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in demandes %}
+                <tr {% if d.statut == "nouvelle" %}class="table-warning"{% endif %}>
+                    <td>{{ d.created_at|date:"d/m/Y H:i" }}</td>
+                    <td>{{ d.nom_contact }}<br><span class="text-muted small">{{ d.telephone_contact }}</span></td>
+                    <td>{{ d.matiere }}</td>
+                    <td>{{ d.classe_enfant }}</td>
+                    <td>{{ d.zone }}</td>
+                    <td>{{ d.get_statut_display }}</td>
+                    <td><a href="{% url 'repetition:detail_demande' d.pk %}" class="btn btn-outline-primary btn-sm">Ouvrir</a></td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="7" class="text-muted">Aucune demande pour l'instant.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

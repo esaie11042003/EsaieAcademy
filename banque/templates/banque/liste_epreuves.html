@@ -1,0 +1,81 @@
+{% extends "portal/base.html" %}
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Banque des épreuves</h2>
+        <div>
+            {% if user.is_authenticated %}
+                {% if user.role == "admin" %}
+                    <a href="{% url 'banque:epreuves_desactivees' %}" class="btn btn-outline-secondary me-2">Désactivées</a>
+                    <a href="{% url 'banque:corbeille_epreuves' %}" class="btn btn-outline-dark me-2">Corbeille</a>
+                {% endif %}
+                {% if user.role == "staff" or user.role == "admin" %}
+                    <a href="{% url 'banque:ajouter_epreuve' %}" class="btn btn-primary">Ajouter une épreuve</a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    <form method="get" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="q" class="form-control" placeholder="Rechercher..." value="{{ query }}">
+            <button type="submit" class="btn btn-outline-primary">Rechercher</button>
+        </div>
+    </form>
+    {% if query %}
+        <ul class="list-group">
+            {% for e in epreuves %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>{{ e.classe.nom }} — {{ e.titre }} ({{ e.annee }})</span>
+                    <span>
+                        {% if e.a_acces %}
+                            <a href="{% url 'banque:telecharger_epreuve' e.pk 'sujet' %}" class="btn btn-outline-primary btn-sm">Sujet</a>
+                            {% if e.fichier_corrige %}<a href="{% url 'banque:telecharger_epreuve' e.pk 'corrige' %}" class="btn btn-outline-success btn-sm">Corrigé</a>{% endif %}
+                        {% else %}
+                            <span class="badge bg-warning text-dark">Payant — {{ e.prix }} FCFA</span>
+                            <a href="{% url 'monetisation:acheter' 'banque' 'epreuveclasse' e.pk %}" class="btn btn-primary btn-sm">Acheter</a>
+                        {% endif %}
+                        {% if user.is_authenticated and user.role == "admin" %}
+                            <a href="{% url 'banque:modifier_epreuve' e.pk %}" class="btn btn-outline-secondary btn-sm">Modifier</a>
+                            <form method="post" action="{% url 'banque:basculer_epreuve' e.pk %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-{% if e.is_active %}danger{% else %}success{% endif %} btn-sm">{% if e.is_active %}Désactiver{% else %}Réactiver{% endif %}</button>
+                            </form>
+                            <a href="{% url 'banque:supprimer_epreuve' e.pk %}" class="btn btn-outline-dark btn-sm">Supprimer</a>
+                        {% endif %}
+                    </span>
+                </li>
+            {% empty %}<li class="list-group-item text-muted">Aucun résultat.</li>{% endfor %}
+        </ul>
+    {% else %}
+        {% for classe in classes_list %}
+            <div class="mb-4">
+                <h4>{{ classe.nom }}</h4>
+                <ul class="list-group">
+                    {% for e in classe.epreuves_visibles %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>{{ e.titre }} ({{ e.annee }})</span>
+                            <span>
+                                {% if e.a_acces %}
+                                    <a href="{% url 'banque:telecharger_epreuve' e.pk 'sujet' %}" class="btn btn-outline-primary btn-sm">Sujet</a>
+                                    {% if e.fichier_corrige %}<a href="{% url 'banque:telecharger_epreuve' e.pk 'corrige' %}" class="btn btn-outline-success btn-sm">Corrigé</a>{% endif %}
+                                {% else %}
+                                    <span class="badge bg-warning text-dark">Payant — {{ e.prix }} FCFA</span>
+                                    <a href="{% url 'monetisation:acheter' 'banque' 'epreuveclasse' e.pk %}" class="btn btn-primary btn-sm">Acheter</a>
+                                {% endif %}
+                                {% if user.is_authenticated and user.role == "admin" %}
+                                    <a href="{% url 'banque:modifier_epreuve' e.pk %}" class="btn btn-outline-secondary btn-sm">Modifier</a>
+                                    <form method="post" action="{% url 'banque:basculer_epreuve' e.pk %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-outline-{% if e.is_active %}danger{% else %}success{% endif %} btn-sm">{% if e.is_active %}Désactiver{% else %}Réactiver{% endif %}</button>
+                                    </form>
+                                    <a href="{% url 'banque:supprimer_epreuve' e.pk %}" class="btn btn-outline-dark btn-sm">Supprimer</a>
+                                {% endif %}
+                            </span>
+                        </li>
+                    {% empty %}<li class="list-group-item text-muted">Aucune épreuve.</li>{% endfor %}
+                </ul>
+            </div>
+        {% empty %}<p class="text-muted">Aucune classe pour l'instant.</p>{% endfor %}
+    {% endif %}
+</div>
+{% endblock %}

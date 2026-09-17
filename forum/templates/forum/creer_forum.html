@@ -1,0 +1,33 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h3 class="mb-4">Créer un forum</h3>
+
+            {% if form.errors %}
+                <div class="alert alert-danger">Veuillez corriger les erreurs ci-dessous.</div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Nom du forum</label>
+                    {{ form.nom }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    {{ form.description }}
+                </div>
+                <div class="form-check mb-3">
+                    {{ form.actif }}
+                    <label class="form-check-label">Actif</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Créer et ajouter des membres</button>
+                <a href="{% url 'forum:liste_forums' %}" class="btn btn-outline-secondary">Annuler</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

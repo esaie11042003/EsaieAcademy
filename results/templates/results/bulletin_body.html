@@ -1,0 +1,175 @@
+<div class="bulletin-cadre">
+
+    <table class="bulletin-entete-table">
+        <tr>
+            <td class="col-armoiries">
+                {% if logo_devise_benin %}
+                    <img src="{{ logo_devise_benin.url }}" alt="Logo devise du Bénin" class="armoiries">
+                {% endif %}
+            </td>
+            <td class="col-etat">
+                <strong>RÉPUBLIQUE DU BÉNIN</strong><br>
+                <span class="petit">*******</span><br>
+                <span class="petit">MINISTÈRE DES ENSEIGNEMENTS SECONDAIRE, TECHNIQUE ET DE LA FORMATION PROFESSIONNELLE</span><br>
+                <span class="petit">*******</span><br>
+                <span class="petit">DIRECTION DÉPARTEMENTALE DES ENSEIGNEMENTS SECONDAIRE, TECHNIQUE ET DE LA FORMATION PROFESSIONNELLE{% if school.departement %} DE {{ school.departement|upper }}{% endif %}</span><br>
+                <span class="petit">*******</span><br>
+                <strong class="nom-ecole-entete">{{ school.nom|upper }}</strong>
+            </td>
+            <td class="col-logo">
+                {% if school.logo %}
+                    <img src="{{ school.logo.url }}" alt="Logo établissement" class="logo-ecole">
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+
+    <hr class="trait">
+
+    <table class="bulletin-ligne-infos">
+        <tr>
+            <td>Année scolaire : <strong>{{ period.school_year.nom }}</strong></td>
+            <td>{% if school.adresse %}BP : <strong>{{ school.adresse }}</strong>{% endif %}</td>
+            <td>{% if school.telephone %}Tél : <strong>{{ school.telephone }}</strong>{% endif %}</td>
+        </tr>
+    </table>
+
+    <h3 class="titre-bulletin">BULLETIN DE NOTES DU {{ period.get_name_display|upper }}</h3>
+
+    <table class="bulletin-infos">
+        <tr>
+            <td class="etiquette">Nom</td><td>{{ eleve.nom }}</td>
+            <td class="etiquette">Classe</td><td>{{ eleve.classe.nom }}</td>
+        </tr>
+        <tr>
+            <td class="etiquette">Prénom(s)</td><td>{{ eleve.prenom }}</td>
+            <td class="etiquette">Effectif</td><td>{{ effectif_classe }}</td>
+        </tr>
+        <tr>
+            <td class="etiquette">Sexe</td><td>{{ eleve.get_sexe_display }}</td>
+            <td class="etiquette">Statut</td><td>{{ eleve.get_statut_display }}</td>
+        </tr>
+        <tr>
+            <td class="etiquette">NPI</td><td>{{ eleve.npi|default:"—" }}</td>
+            <td class="etiquette">Matricule</td><td>{{ eleve.matricule|default:"—" }}</td>
+        </tr>
+    </table>
+
+    <table class="bulletin-table">
+        <thead>
+            <tr>
+                <th>Disciplines</th>
+                <th>Coef.</th>
+                <th>Moy. Interros</th>
+                <th>Devoir 1</th>
+                <th>Devoir 2</th>
+                <th>Moyenne/20</th>
+                <th>Points</th>
+                <th>Rang</th>
+                <th>Appréciation</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in subject_results %}
+                <tr>
+                    <td class="gauche">{{ r.assignment.subject.nom }}</td>
+                    <td>{{ r.coefficient }}</td>
+                    <td>{{ r.moyenne_interrogations }}</td>
+                    <td>{{ r.devoir_1 }}</td>
+                    <td>{{ r.devoir_2 }}</td>
+                    <td><strong>{{ r.moyenne }}</strong></td>
+                    <td>{{ r.points }}</td>
+                    <td>{{ r.rang }}</td>
+                    <td>{{ r.appreciation }}</td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="9">Aucun résultat calculé pour cette période.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if student_result %}
+        <table class="bulletin-totaux">
+            <tr>
+                <td class="etiquette">Moyenne {{ period.get_name_display }}</td>
+                <td class="valeur-forte">{{ student_result.moyenne_generale }} / 20</td>
+                <td class="etiquette">Total points</td>
+                <td>{{ student_result.total_points }}</td>
+                <td class="etiquette">Rang</td>
+                <td class="valeur-forte">{{ student_result.rang }} / {{ effectif_classe }}</td>
+            </tr>
+            <tr>
+                <td class="etiquette">Moy. matières scientifiques</td>
+                <td>{{ student_result.moyenne_scientifique }} / 20</td>
+                <td class="etiquette">Moy. matières littéraires</td>
+                <td>{{ student_result.moyenne_litteraire }} / 20</td>
+                <td class="etiquette">Mention</td>
+                <td>{{ student_result.mention }}</td>
+            </tr>
+            <tr>
+                <td class="etiquette">Conduite</td>
+                <td>{{ student_result.conduite|default:"—" }}</td>
+                <td class="etiquette">Décision</td>
+                <td colspan="3">{{ student_result.get_decision_display }}</td>
+            </tr>
+        </table>
+
+        <table class="bulletin-recompenses">
+            <thead>
+                <tr>
+                    <th>Récompenses</th>
+                    <th>Sanctions</th>
+                    <th>Assiduité</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <span class="case">{% if student_result.felicitations %}☑{% else %}☐{% endif %}</span> Félicitations<br>
+                        <span class="case">{% if student_result.encouragements %}☑{% else %}☐{% endif %}</span> Encouragements<br>
+                        <span class="case">{% if student_result.tableau_honneur %}☑{% else %}☐{% endif %}</span> Tableau d'honneur
+                    </td>
+                    <td>
+                        <span class="case">{% if student_result.avertissement %}☑{% else %}☐{% endif %}</span> Avertissement<br>
+                        <span class="case">{% if student_result.blame %}☑{% else %}☐{% endif %}</span> Blâme<br>
+                        <span class="case">{% if student_result.travail_acceptable %}☑{% else %}☐{% endif %}</span> Travail acceptable
+                    </td>
+                    <td>
+                        Heures d'absence : <strong>{{ student_result.heures_absence }}</strong>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    {% else %}
+        <p class="petit">Le résultat général n'a pas encore été calculé pour cette période.</p>
+    {% endif %}
+
+    <table class="bulletin-bas">
+        <tr>
+            <td class="col-date" colspan="2">
+                {% if school.ville %}{{ school.ville|upper }}, le{% endif %} ______________________
+            </td>
+        </tr>
+        <tr>
+            <td class="col-signature-gauche">
+                <div class="espace-signature"></div>
+                <div class="label-signature">Le Professeur Principal</div>
+                <div class="nom-signature">
+                    {% if professeur_principal %}{{ professeur_principal.user.get_full_name|default:professeur_principal.user.username }}{% else %}—{% endif %}
+                </div>
+            </td>
+            <td class="col-signature-droite">
+                {% if school.cachet %}
+                    <img src="{{ school.cachet.url }}" alt="Cachet" class="cachet-img">
+                {% else %}
+                    <div class="espace-signature"></div>
+                {% endif %}
+                <div class="label-signature">Le Chef d'établissement</div>
+                <div class="nom-signature">
+                    {% if directeur %}{{ directeur.user.get_full_name|default:directeur.user.username }}{% else %}—{% endif %}
+                </div>
+            </td>
+        </tr>
+    </table>
+
+</div>

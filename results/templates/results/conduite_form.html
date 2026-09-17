@@ -1,0 +1,65 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h3 class="mb-3">Conduite & récompenses</h3>
+            <p class="text-muted">{{ eleve.prenom }} {{ eleve.nom }} — {{ period.get_name_display }}</p>
+
+            {% if form.errors %}
+                <div class="alert alert-danger">Veuillez corriger les erreurs ci-dessous.</div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label class="form-label">Conduite</label>
+                    {{ form.conduite }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label d-block">Récompenses</label>
+                    <div class="form-check">
+                        {{ form.felicitations }}
+                        <label class="form-check-label">Félicitations</label>
+                    </div>
+                    <div class="form-check">
+                        {{ form.encouragements }}
+                        <label class="form-check-label">Encouragements</label>
+                    </div>
+                    <div class="form-check">
+                        {{ form.tableau_honneur }}
+                        <label class="form-check-label">Tableau d'honneur</label>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label d-block">Sanctions</label>
+                    <div class="form-check">
+                        {{ form.avertissement }}
+                        <label class="form-check-label">Avertissement</label>
+                    </div>
+                    <div class="form-check">
+                        {{ form.blame }}
+                        <label class="form-check-label">Blâme</label>
+                    </div>
+                    <div class="form-check">
+                        {{ form.travail_acceptable }}
+                        <label class="form-check-label">Travail acceptable</label>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Heures d'absence</label>
+                    {{ form.heures_absence }}
+                </div>
+
+                <button type="submit" class="btn btn-primary">Enregistrer</button>
+                <a href="{% url 'results:bulletin_eleve' eleve.pk period.pk %}" class="btn btn-outline-secondary">Annuler</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

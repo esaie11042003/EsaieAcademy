@@ -1,0 +1,11 @@
+<div class="container py-5"></div>
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <h2>Tableau de bord — Enseignant</h2>
+    <p>Bienvenue, {{ user.get_full_name|default:user.username }} !</p>
+    <a href="{% url 'teachers:mes_coordonnees' %}" class="btn btn-outline-primary mt-3 me-2">Mes coordonnées</a>
+    <a href="{% url 'teachers:mes_ecoles' %}" class="btn btn-primary mt-3">Mes établissements</a>
+</div>
+{% endblock %}

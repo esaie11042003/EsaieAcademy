@@ -1,0 +1,41 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h3>Modifier « {{ periode.get_name_display }} »</h3>
+
+            {% if form.errors %}
+                <div class="alert alert-danger">Veuillez corriger les erreurs ci-dessous.</div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Année scolaire</label>
+                    {{ form.school_year }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Période</label>
+                    {{ form.name }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Date de début</label>
+                    {{ form.start_date }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Date de fin</label>
+                    {{ form.end_date }}
+                </div>
+                <div class="form-check mb-3">
+                    {{ form.is_active }}
+                    <label class="form-check-label">Période active</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Enregistrer</button>
+                <a href="{% url 'school:gerer_periodes' %}" class="btn btn-outline-secondary">Annuler</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

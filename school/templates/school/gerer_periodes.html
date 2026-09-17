@@ -1,0 +1,62 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Créer une période</h3>
+
+            {% if form.errors %}
+                <div class="alert alert-danger">Veuillez corriger les erreurs ci-dessous.</div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Année scolaire</label>
+                    {{ form.school_year }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Période</label>
+                    {{ form.name }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Date de début</label>
+                    {{ form.start_date }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Date de fin</label>
+                    {{ form.end_date }}
+                </div>
+                <div class="form-check mb-3">
+                    {{ form.is_active }}
+                    <label class="form-check-label">Période active</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Créer</button>
+            </form>
+        </div>
+
+        <div class="col-md-6">
+            <h5>Périodes existantes ({{ periodes.count }})</h5>
+            <ul class="list-group">
+                {% for p in periodes %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>
+                            {{ p.get_name_display }} ({{ p.school_year.nom }})
+                            {% if p.is_active %}<span class="badge bg-success ms-2">Active</span>{% endif %}
+                        </span>
+                        <span>
+                            <a href="{% url 'school:modifier_periode' p.pk %}" class="btn btn-outline-secondary btn-sm">Modifier</a>
+                            {% if not p.is_active %}
+                                <a href="{% url 'school:activer_periode' p.pk %}" class="btn btn-outline-success btn-sm">Activer</a>
+                            {% endif %}
+                        </span>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item text-muted">Aucune période pour l'instant.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

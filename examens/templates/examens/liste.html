@@ -1,0 +1,107 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Préparation des examens</h2>
+        <div>
+            {% if user.is_authenticated and user.role == "admin" %}
+                <a href="{% url 'examens:epreuves_desactivees' %}" class="btn btn-outline-secondary me-2">Désactivées</a>
+                <a href="{% url 'examens:corbeille_examens' %}" class="btn btn-outline-dark me-2">Corbeille</a>
+                <a href="{% url 'examens:gerer_examens' %}" class="btn btn-outline-primary me-2">Créer un examen</a>
+            {% endif %}
+            {% if user.is_authenticated and user.role in "staff,admin" %}
+                <a href="{% url 'examens:ajouter_epreuve' %}" class="btn btn-primary">Ajouter une épreuve</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <form method="get" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="q" class="form-control" placeholder="Rechercher un examen, une épreuve, une année..." value="{{ query }}">
+            <button type="submit" class="btn btn-outline-primary">Rechercher</button>
+            {% if query %}
+                <a href="{% url 'examens:liste_examens' %}" class="btn btn-outline-secondary">Réinitialiser</a>
+            {% endif %}
+        </div>
+    </form>
+
+    {% if query %}
+        <h5>Résultats pour « {{ query }} » ({{ epreuves.count }})</h5>
+        <ul class="list-group">
+            {% for epreuve in epreuves %}
+                <li class="list-group-item">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>
+                            {{ epreuve.examen.nom }} — {{ epreuve.titre }} ({{ epreuve.annee }})
+                        </span>
+                        <span>
+                            {% if epreuve.a_acces %}
+                                <a href="{% url 'examens:telecharger' epreuve.pk 'sujet' %}" class="btn btn-outline-primary btn-sm">Sujet</a>
+                                {% if epreuve.fichier_corrige %}
+                                    <a href="{% url 'examens:telecharger' epreuve.pk 'corrige' %}" class="btn btn-outline-success btn-sm">Corrigé</a>
+                                {% endif %}
+                            {% else %}
+                                <span class="badge bg-warning text-dark">Payant — {{ epreuve.prix }} FCFA</span>
+                                <a href="{% url 'monetisation:acheter' 'examens' 'epreuveexamen' epreuve.pk %}" class="btn btn-primary btn-sm">Acheter</a>
+                            {% endif %}
+                            {% if user.is_authenticated and user.role == "admin" %}
+                                <a href="{% url 'examens:modifier_epreuve' epreuve.pk %}" class="btn btn-outline-secondary btn-sm">Modifier</a>
+                                {% if epreuve.is_active %}
+                                    <a href="{% url 'examens:basculer_epreuve' epreuve.pk %}" class="btn btn-outline-danger btn-sm">Désactiver</a>
+                                {% else %}
+                                    <a href="{% url 'examens:basculer_epreuve' epreuve.pk %}" class="btn btn-outline-success btn-sm">Réactiver</a>
+                                {% endif %}
+                                <a href="{% url 'examens:supprimer_epreuve' epreuve.pk %}" class="btn btn-outline-dark btn-sm">Supprimer</a>
+                            {% endif %}
+                        </span>
+                    </div>
+                </li>
+            {% empty %}
+                <li class="list-group-item text-muted">Aucun résultat.</li>
+            {% endfor %}
+        </ul>
+
+    {% else %}
+        {% for examen in examens_list %}
+            <div class="mb-4">
+                <h4>{{ examen.nom }}</h4>
+                <p class="text-muted small">{{ examen.description }}</p>
+                <ul class="list-group">
+                    {% for epreuve in examen.epreuves_visibles %}
+                        <li class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span>{{ epreuve.titre }} ({{ epreuve.annee }})</span>
+                                <span>
+                                    {% if epreuve.a_acces %}
+                                        <a href="{% url 'examens:telecharger' epreuve.pk 'sujet' %}" class="btn btn-outline-primary btn-sm">Sujet</a>
+                                        {% if epreuve.fichier_corrige %}
+                                            <a href="{% url 'examens:telecharger' epreuve.pk 'corrige' %}" class="btn btn-outline-success btn-sm">Corrigé</a>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="badge bg-warning text-dark">Payant — {{ epreuve.prix }} FCFA</span>
+                                        <a href="{% url 'monetisation:acheter' 'examens' 'epreuveexamen' epreuve.pk %}" class="btn btn-primary btn-sm">Acheter</a>
+                                    {% endif %}
+                                    {% if user.is_authenticated and user.role == "admin" %}
+                                        <a href="{% url 'examens:modifier_epreuve' epreuve.pk %}" class="btn btn-outline-secondary btn-sm">Modifier</a>
+                                        {% if epreuve.is_active %}
+                                            <a href="{% url 'examens:basculer_epreuve' epreuve.pk %}" class="btn btn-outline-danger btn-sm">Désactiver</a>
+                                        {% else %}
+                                            <a href="{% url 'examens:basculer_epreuve' epreuve.pk %}" class="btn btn-outline-success btn-sm">Réactiver</a>
+                                        {% endif %}
+                                        <a href="{% url 'examens:supprimer_epreuve' epreuve.pk %}" class="btn btn-outline-dark btn-sm">Supprimer</a>
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item text-muted">Aucune épreuve pour l'instant.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% empty %}
+            <p class="text-muted">Aucun examen enregistré pour l'instant.</p>
+        {% endfor %}
+    {% endif %}
+</div>
+{% endblock %}

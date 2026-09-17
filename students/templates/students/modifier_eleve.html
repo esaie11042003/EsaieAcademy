@@ -1,0 +1,66 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h3 class="mb-4">Modifier {{ eleve.prenom }} {{ eleve.nom }}</h3>
+
+            {% if form.errors %}
+                <div class="alert alert-danger">Veuillez corriger les erreurs ci-dessous.</div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Nom</label>
+                        {{ form.nom }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Prénom(s)</label>
+                        {{ form.prenom }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Sexe</label>
+                        {{ form.sexe }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Date de naissance</label>
+                        {{ form.date_naissance }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Statut</label>
+                        {{ form.statut }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">NPI</label>
+                        {{ form.npi }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Matricule</label>
+                        {{ form.matricule }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Classe</label>
+                        {{ form.classe }}
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Enregistrer</button>
+                <a href="{% url 'portal:dashboard' %}" class="btn btn-outline-secondary">Annuler</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

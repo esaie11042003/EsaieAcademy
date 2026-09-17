@@ -1,0 +1,44 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Ajouter un enseignant</h3>
+            <p class="text-muted">Établissement : <strong>{{ school.nom }}</strong></p>
+            <a href="{% url 'teachers:inscrire_enseignant' %}" class="btn btn-outline-primary btn-sm mb-3">
+                L'enseignant n'a pas de compte ? L'inscrire directement
+            </a>
+
+            {% if form.errors %}
+                <div class="alert alert-danger">Veuillez corriger les erreurs ci-dessous.</div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    {{ form.identifiant.label_tag }}
+                    {{ form.identifiant }}
+                </div>
+                <button type="submit" class="btn btn-primary">Ajouter</button>
+            </form>
+        </div>
+
+        <div class="col-md-6">
+            <h5>Enseignants de l'établissement ({{ enseignants.count }})</h5>
+            <ul class="list-group">
+                {% for a in enseignants %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>{{ a.teacher.user.get_full_name|default:a.teacher.user.username }}</span>
+                        <a href="{% url 'teachers:reinitialiser_pin' a.pk %}" class="btn btn-outline-secondary btn-sm">PIN oublié ? Réinitialiser</a>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item text-muted">Aucun enseignant pour l'instant.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

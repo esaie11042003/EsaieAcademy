@@ -1,0 +1,43 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Ajouter un co-administrateur</h3>
+            <a href="{% url 'accounts:inscrire_admin' %}" class="btn btn-outline-primary btn-sm mb-3">
+                Cette personne n'a pas de compte ? L'inscrire directement
+            </a>
+
+            {% if form.errors %}
+                <div class="alert alert-danger">Veuillez corriger les erreurs ci-dessous.</div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    {{ form.identifiant.label_tag }}
+                    {{ form.identifiant }}
+                </div>
+                <button type="submit" class="btn btn-primary">Ajouter</button>
+            </form>
+        </div>
+
+        <div class="col-md-6">
+            <h5>Co-administrateurs ({{ admins.count }})</h5>
+            <ul class="list-group">
+                {% for a in admins %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>{{ a.get_full_name|default:a.username }} {% if a.is_superuser %}<span class="badge bg-dark">Général</span>{% endif %}</span>
+                        {% if not a.is_superuser %}
+                            <a href="{% url 'accounts:retirer_admin' a.pk %}" class="btn btn-outline-danger btn-sm">Retirer</a>
+                        {% endif %}
+                    </li>
+                {% empty %}
+                    <li class="list-group-item text-muted">Aucun co-administrateur pour l'instant.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

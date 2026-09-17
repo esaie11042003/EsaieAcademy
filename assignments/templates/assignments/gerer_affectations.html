@@ -1,0 +1,60 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Affecter un enseignant</h3>
+            <p class="text-muted">Établissement : <strong>{{ school.nom }}</strong></p>
+
+            {% if form.errors %}
+                <div class="alert alert-danger">Veuillez corriger les erreurs ci-dessous.</div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Enseignant</label>
+                    {{ form.teacher }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Classe</label>
+                    {{ form.classe }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Matière</label>
+                    {{ form.subject }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Année scolaire</label>
+                    {{ form.school_year }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Coefficient</label>
+                    {{ form.coefficient }}
+                </div>
+                <div class="form-check mb-3">
+                    {{ form.active }}
+                    <label class="form-check-label">Affectation active</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Affecter</button>
+            </form>
+        </div>
+
+        <div class="col-md-6">
+            <h5>Affectations ({{ affectations.count }})</h5>
+            <ul class="list-group">
+                {% for a in affectations %}
+                    <li class="list-group-item">
+                        {{ a.teacher.user.get_full_name|default:a.teacher.user.username }}
+                        — {{ a.subject.nom }} — {{ a.classe.nom }}
+                        <span class="text-muted small">({{ a.school_year.nom }})</span>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item text-muted">Aucune affectation pour l'instant.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

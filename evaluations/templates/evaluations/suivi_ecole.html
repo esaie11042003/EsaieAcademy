@@ -1,0 +1,41 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <h3>Suivi des évaluations — {{ school.nom }}</h3>
+
+    <table class="table table-bordered mt-4">
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Matière</th>
+                <th>Classe</th>
+                <th>Enseignant</th>
+                <th>Période</th>
+                <th>Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for e in evaluations %}
+                <tr>
+                    <td>{{ e.get_evaluation_type_display }} {{ e.numero }}</td>
+                    <td>{{ e.assignment.subject.nom }}</td>
+                    <td>{{ e.assignment.classe.nom }}</td>
+                    <td>{{ e.assignment.teacher.user.get_full_name|default:e.assignment.teacher.user.username }}</td>
+                    <td>{{ e.period.get_name_display }}</td>
+                    <td>{{ e.date }}</td>
+                    <td>
+                        <a href="{% url 'evaluations:liste_notes' e.pk %}" class="btn btn-outline-primary btn-sm">Notes</a>
+                        <a href="{% url 'evaluations:historique_evaluation' e.pk %}" class="btn btn-outline-secondary btn-sm">Historique</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="7" class="text-muted">Aucune évaluation pour l'instant.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{% url 'portal:dashboard' %}" class="btn btn-outline-secondary">Retour au tableau de bord</a>
+</div>
+{% endblock %}

@@ -1,0 +1,111 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4">Vue d'ensemble — Administration Esaïe Academy</h2>
+
+    <div class="mb-4">
+        <a href="{% url 'platform_admin:modifier_logo_devise' %}" class="btn btn-outline-primary btn-sm me-2">
+            Logo devise du Bénin
+        </a>
+        <a href="{% url 'repetition:liste_demandes' %}" class="btn btn-outline-primary btn-sm position-relative me-2">
+            Demandes de Maître d'étude
+            {% if nouvelles_demandes %}
+                <span class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-pill">
+                    {{ nouvelles_demandes }}
+                </span>
+            {% endif %}
+        </a>
+        <a href="{% url 'forum:liste_forums' %}" class="btn btn-primary btn-sm">
+            <i class="fa-solid fa-comments me-1"></i> Forum
+        </a>
+    </div>
+
+    <div class="row g-3 mb-5">
+        <div class="col-md-3 col-6">
+            <div class="card text-center p-3">
+                <h3>{{ nb_etablissements }}</h3>
+                <p class="text-muted small mb-0">Établissements</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card text-center p-3">
+                <h3>{{ nb_eleves }}</h3>
+                <p class="text-muted small mb-0">Élèves</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card text-center p-3">
+                <h3>{{ nb_enseignants }}</h3>
+                <p class="text-muted small mb-0">Enseignants</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card text-center p-3">
+                <h3>{{ nb_utilisateurs }}</h3>
+                <p class="text-muted small mb-0">Comptes au total</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card text-center p-3">
+                <h3>{{ nb_admins }}</h3>
+                <p class="text-muted small mb-0">Administrateurs</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card text-center p-3">
+                <h3>{{ nb_epreuves_concours }}</h3>
+                <p class="text-muted small mb-0">Épreuves concours</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card text-center p-3">
+                <h3>{{ nb_epreuves_examens }}</h3>
+                <p class="text-muted small mb-0">Épreuves examens</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card text-center p-3">
+                <h3>{{ nb_documents }}</h3>
+                <p class="text-muted small mb-0">Documents</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-4">
+        <a href="{% url 'platform_admin:gerer_admins' %}" class="btn btn-primary mb-2 me-2">Gérer les co-administrateurs</a>
+        <a href="{% url 'platform_admin:gerer_etablissements' %}" class="btn btn-primary mb-2 me-2">Gérer les établissements</a>
+        <a href="{% url 'documents:liste_documents' %}" class="btn btn-primary mb-4 me-2">Gérer les documents</a>
+        <a href="{% url 'monetisation:gerer_comptes_reception' %}" class="btn btn-primary mb-4">Numéros MTN/Celtiis/Moov</a>
+        <a href="{% url 'classes:creer_classe' %}" class="btn btn-secondary mb-2 me-2">Gérer les classes (plateforme)</a>
+        <a href="{% url 'subjects:gerer_matieres' %}" class="btn btn-secondary mb-2">Gérer les matières</a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h5>Derniers utilisateurs inscrits</h5>
+            <ul class="list-group">
+                {% for u in derniers_utilisateurs %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>{{ u.get_full_name|default:u.username }}</span>
+                        <span class="text-muted small">{{ u.get_role_display }}</span>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item text-muted">Aucun utilisateur pour l'instant.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="col-md-6">
+            <h5>Derniers établissements créés</h5>
+            <ul class="list-group">
+                {% for s in derniers_etablissements %}
+                    <li class="list-group-item">{{ s.nom }} — {{ s.ville }}</li>
+                {% empty %}
+                    <li class="list-group-item text-muted">Aucun établissement pour l'instant.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

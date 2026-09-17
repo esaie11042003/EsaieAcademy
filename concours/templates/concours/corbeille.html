@@ -1,0 +1,31 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <h3>Corbeille — Épreuves de concours</h3>
+    <p class="text-muted">Suppression définitive 30 jours après mise à la corbeille.</p>
+
+    <table class="table table-bordered mt-4">
+        <thead>
+            <tr><th>Titre</th><th>Supprimée le</th><th>Jours restants</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+            {% for e in epreuves %}
+                <tr>
+                    <td>{{ e.concours.nom }} — {{ e.titre }}</td>
+                    <td>{{ e.deleted_at }}</td>
+                    <td>{{ e.jours_restants }} jour(s)</td>
+                    <td>
+                        <a href="{% url 'concours:restaurer_epreuve' e.pk %}" class="btn btn-outline-success btn-sm">Restaurer</a>
+                        <a href="{% url 'concours:supprimer_definitivement_epreuve' e.pk %}" class="btn btn-outline-danger btn-sm">Supprimer définitivement</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="4" class="text-muted">Corbeille vide.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{% url 'concours:liste_concours' %}" class="btn btn-outline-secondary">Retour</a>
+</div>
+{% endblock %}

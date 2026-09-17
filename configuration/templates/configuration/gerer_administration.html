@@ -1,0 +1,48 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Ajouter à l'administration</h3>
+            <p class="text-muted">Établissement : <strong>{{ school.nom }}</strong></p>
+            <a href="{% url 'configuration:inscrire_staff' %}" class="btn btn-outline-primary btn-sm mb-3">
+                La personne n'a pas de compte ? L'inscrire directement
+            </a>
+
+            {% if form.errors %}
+                <div class="alert alert-danger">Veuillez corriger les erreurs ci-dessous.</div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    {{ form.identifiant.label_tag }}
+                    {{ form.identifiant }}
+                </div>
+                <div class="mb-3">
+                    {{ form.fonction.label_tag }}
+                    {{ form.fonction }}
+                </div>
+                <button type="submit" class="btn btn-primary">Ajouter</button>
+            </form>
+        </div>
+
+        <div class="col-md-6">
+            <h5>Administration ({{ administration.count }})</h5>
+            <ul class="list-group">
+                {% for membre in administration %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>{{ membre.user.get_full_name|default:membre.user.username }}</span>
+                        <span class="text-muted small">{{ membre.role.nom }}</span>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item text-muted">Aucun membre pour l'instant.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

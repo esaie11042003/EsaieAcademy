@@ -1,0 +1,56 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+
+            {% if not demande %}
+                <h3 class="mb-3">Suivre ma demande</h3>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">{{ form.telephone.label }}</label>
+                        {{ form.telephone }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">{{ form.code_suivi.label }}</label>
+                        {{ form.code_suivi }}
+                    </div>
+                    <button type="submit" name="verifier_code" class="btn btn-primary w-100">Voir ma demande</button>
+                </form>
+
+            {% else %}
+                <h3>Votre demande — {{ demande.matiere }} ({{ demande.classe_enfant }})</h3>
+                <p class="text-muted">Statut : <strong>{{ demande.get_statut_display }}</strong></p>
+
+                {% if demande.rdv_date %}
+                    <div class="alert alert-info">
+                        Rendez-vous prévu le {{ demande.rdv_date|date:"d/m/Y à H:i" }} — {{ demande.rdv_lieu }}
+                    </div>
+                {% endif %}
+
+                <h6 class="mt-4">Échanges</h6>
+                <div class="mb-3" style="max-height:350px; overflow-y:auto;">
+                    {% for m in demande.messages.all %}
+                        <div class="mb-2 p-2 border rounded {% if m.is_admin %}bg-light{% endif %}">
+                            <div class="small text-muted">{% if m.is_admin %}L'établissement{% else %}Vous{% endif %} — {{ m.created_at|date:"d/m/Y H:i" }}</div>
+                            <div>{{ m.contenu }}</div>
+                        </div>
+                    {% empty %}
+                        <p class="text-muted">Aucun message pour l'instant.</p>
+                    {% endfor %}
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="demande_pk" value="{{ demande.pk }}">
+                    {{ message_form.contenu }}
+                    <button type="submit" name="envoyer_message" class="btn btn-primary btn-sm mt-2">Envoyer</button>
+                </form>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+{% endblock %}

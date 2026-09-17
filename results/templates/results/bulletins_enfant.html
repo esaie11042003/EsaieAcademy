@@ -1,0 +1,24 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <h3>Bulletins de {{ eleve.prenom }} {{ eleve.nom }}</h3>
+    <p class="text-muted">{{ eleve.classe.nom }}</p>
+
+    <ul class="list-group">
+        {% for period in periods %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>{{ period.get_name_display }} — {{ period.school_year.nom }}</span>
+                <span>
+                    <a href="{% url 'results:bulletin_eleve' eleve.pk period.pk %}" class="btn btn-outline-primary btn-sm">Voir</a>
+                    <a href="{% url 'results:bulletin_pdf' eleve.pk period.pk %}" class="btn btn-outline-secondary btn-sm">PDF</a>
+                </span>
+            </li>
+        {% empty %}
+            <li class="list-group-item text-muted">Aucune période disponible.</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{% url 'portal:dashboard' %}" class="btn btn-outline-secondary mt-3">Retour</a>
+</div>
+{% endblock %}

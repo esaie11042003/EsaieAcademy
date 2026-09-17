@@ -1,0 +1,33 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h3>Modifier la note de {{ note.eleve.prenom }} {{ note.eleve.nom }}</h3>
+
+            {% if form.errors %}
+                <div class="alert alert-danger">Veuillez corriger les erreurs ci-dessous.</div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Note</label>
+                    {{ form.note }}
+                </div>
+                <div class="form-check mb-3">
+                    {{ form.absent }}
+                    <label class="form-check-label">Absent</label>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Raison de la modification</label>
+                    {{ form.raison }}
+                </div>
+                <button type="submit" class="btn btn-primary">Enregistrer</button>
+                <a href="{% url 'evaluations:liste_notes' note.evaluation.pk %}" class="btn btn-outline-secondary">Annuler</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5 text-center">
+    <h3>Merci !</h3>
+    <p class="text-muted">Votre demande a bien été envoyée. Un administrateur de la plateforme vous contactera bientôt.</p>
+
+    {% if code_suivi %}
+        <div class="card d-inline-block p-4 my-3">
+            <p class="mb-1 text-muted small">Notez ce code pour suivre votre demande et voir les réponses :</p>
+            <div class="display-6 fw-bold" style="letter-spacing:4px;">{{ code_suivi }}</div>
+        </div>
+        <p class="text-muted small">Vous pouvez aussi revenir à tout moment via "Suivre ma demande", avec ce code + votre téléphone.</p>
+    {% endif %}
+
+    <div>
+        {% if user.is_authenticated %}
+            <a href="{% url 'repetition:mes_demandes' %}" class="btn btn-primary">Suivre mes demandes</a>
+        {% else %}
+            <a href="{% url 'repetition:suivre_demande' %}" class="btn btn-primary">Suivre ma demande</a>
+        {% endif %}
+        <a href="{% url 'repetition:deposer_demande' %}" class="btn btn-outline-secondary">Faire une autre demande</a>
+        <a href="{% url 'portal:accueil' %}" class="btn btn-outline-secondary">Retour à l'accueil</a>
+    </div>
+</div>
+{% endblock %}

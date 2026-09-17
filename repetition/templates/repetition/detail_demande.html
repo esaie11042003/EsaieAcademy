@@ -1,0 +1,67 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <a href="{% url 'repetition:liste_demandes' %}" class="btn btn-outline-secondary btn-sm mb-3">Retour</a>
+
+    <div class="row">
+        <div class="col-md-5">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5>{{ demande.nom_contact }}</h5>
+                    <p class="mb-1 text-muted">{{ demande.telephone_contact }} {% if demande.email_contact %}— {{ demande.email_contact }}{% endif %}</p>
+                    <hr>
+                    <p class="mb-1"><strong>Matière :</strong> {{ demande.matiere }}</p>
+                    <p class="mb-1"><strong>Classe :</strong> {{ demande.classe_enfant }}</p>
+                    <p class="mb-1"><strong>Zone :</strong> {{ demande.zone }}</p>
+                    <p class="mb-1"><strong>Collège :</strong> {{ demande.college_enfant|default:"—" }}</p>
+                    <p class="mb-1"><strong>Niveau prof. souhaité :</strong> {{ demande.niveau_professeur_voulu|default:"—" }}</p>
+                    <p class="mb-0"><strong>Message :</strong> {{ demande.message|default:"—" }}</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h6>Rendez-vous</h6>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-2">
+                            <label class="form-label small">Date</label>
+                            {{ rdv_form.rdv_date }}
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small">Lieu / Moyen</label>
+                            {{ rdv_form.rdv_lieu }}
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small">Statut</label>
+                            {{ rdv_form.statut }}
+                        </div>
+                        <button type="submit" name="planifier_rdv" class="btn btn-primary btn-sm w-100">Enregistrer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <h6>Discussion</h6>
+            <div class="mb-3" style="max-height:350px; overflow-y:auto;">
+                {% for m in demande.messages.all %}
+                    <div class="mb-2 p-2 border rounded {% if m.is_admin %}bg-light{% endif %}">
+                        <div class="small text-muted">{% if m.is_admin %}Vous (admin){% else %}{{ m.auteur.get_full_name|default:m.auteur.username|default:"Le demandeur" }}{% endif %} — {{ m.created_at|date:"d/m/Y H:i" }}</div>
+                        <div>{{ m.contenu }}</div>
+                    </div>
+                {% empty %}
+                    <p class="text-muted">Aucun message pour l'instant.</p>
+                {% endfor %}
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+                {{ message_form.contenu }}
+                <button type="submit" name="envoyer_message" class="btn btn-primary btn-sm mt-2">Envoyer</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

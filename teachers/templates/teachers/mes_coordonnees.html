@@ -1,0 +1,29 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h3>Mes coordonnées</h3>
+            <p class="text-muted">Renseignez vos informations pour accéder à vos établissements.</p>
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Téléphone</label>
+                    {{ form.phone }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Adresse</label>
+                    {{ form.adresse }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Présentation</label>
+                    {{ form.bio }}
+                </div>
+                <button type="submit" class="btn btn-primary">Enregistrer et voir mes établissements</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
