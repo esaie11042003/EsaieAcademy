@@ -1,0 +1,83 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <h3 class="mb-4">Créer un établissement directement</h3>
+    <p class="text-muted">Cet établissement sera immédiatement validé, avec accès complet pour son directeur.</p>
+
+    {% if form_ecole.errors or form_directeur.errors %}
+        <div class="alert alert-danger">Veuillez corriger les erreurs ci-dessous.</div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        <h5 class="mt-4">Informations de l'établissement</h5>
+        <div class="mb-3">
+            <label class="form-label">Nom</label>
+            {{ form_ecole.nom }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Sigle</label>
+            {{ form_ecole.sigle }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Type d'établissement</label>
+            {{ form_ecole.type_etablissement }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Adresse</label>
+            {{ form_ecole.adresse }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Ville</label>
+            {{ form_ecole.ville }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Téléphone</label>
+            {{ form_ecole.telephone }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            {{ form_ecole.email }}
+        </div>
+
+        <h5 class="mt-4">Compte du directeur</h5>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Prénom</label>
+                {{ form_directeur.first_name }}
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Nom</label>
+                {{ form_directeur.last_name }}
+            </div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Nom d'utilisateur</label>
+            {{ form_directeur.username }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            {{ form_directeur.email }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Téléphone</label>
+            {{ form_directeur.phone }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Mot de passe</label>
+            {{ form_directeur.password1 }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Confirmer le mot de passe</label>
+            {{ form_directeur.password2 }}
+        </div>
+
+        <input type="hidden" name="directeur-fonction" value="Directeur">
+
+        <button type="submit" class="btn btn-primary">Créer et valider l'établissement</button>
+        <a href="{% url 'configuration:etablissements_en_attente' %}" class="btn btn-outline-secondary">Annuler</a>
+    </form>
+</div>
+{% endblock %}

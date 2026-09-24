@@ -1,9 +1,18 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from accounts.models import CustomUser
 from .forms import SchoolProfileForm, SchoolProfileEditForm, RechercheStaffForm, InscriptionStaffForm
-from .models import StaffRole, SchoolStaff
+from .models import StaffRole, SchoolStaff, SchoolProfile
+
+
+def _est_super_admin(user):
+    return user.is_authenticated and user.is_superuser
+
+
+def _etablissement_valide_requis(school_staff):
+    """Retourne True si l'établissement du school_staff est validé."""
+    return school_staff and school_staff.school.statut_validation == "valide"
 
 
 @login_required
@@ -16,7 +25,9 @@ def creer_etablissement(request):
     if request.method == "POST":
         form = SchoolProfileForm(request.POST)
         if form.is_valid():
-            school = form.save()
+            school = form.save(commit=False)
+            school.statut_validation = "en_attente"
+            school.save()
 
             role_directeur, _ = StaffRole.objects.get_or_create(
                 school=school,
@@ -30,7 +41,11 @@ def creer_etablissement(request):
                 role=role_directeur
             )
 
-            messages.success(request, "Établissement créé avec succès. Vous en êtes le Directeur.")
+            messages.success(
+                request,
+                "Votre établissement a été créé et est en attente de validation par l'administration générale. "
+                "Vous recevrez l'accès complet une fois votre dossier validé."
+            )
             return redirect("portal:dashboard")
     else:
         form = SchoolProfileForm()
@@ -40,15 +55,15 @@ def creer_etablissement(request):
 
 @login_required
 def modifier_etablissement(request):
-    """
-    Permet au staff de compléter/modifier les informations de
-    l'établissement : logo, cachet, coordonnées, devise...
-    """
 
     school_staff = SchoolStaff.objects.filter(user=request.user).select_related("school").first()
 
     if not school_staff:
         messages.error(request, "Vous devez d'abord créer ou rejoindre un établissement.")
+        return redirect("portal:dashboard")
+
+    if not _etablissement_valide_requis(school_staff):
+        messages.warning(request, "Votre établissement est en attente de validation. Cette action sera disponible une fois validé.")
         return redirect("portal:dashboard")
 
     school = school_staff.school
@@ -75,6 +90,10 @@ def gerer_administration(request):
 
     if not school_staff:
         messages.error(request, "Vous devez d'abord créer ou rejoindre un établissement.")
+        return redirect("portal:dashboard")
+
+    if not _etablissement_valide_requis(school_staff):
+        messages.warning(request, "Votre établissement est en attente de validation. Cette action sera disponible une fois validé.")
         return redirect("portal:dashboard")
 
     school = school_staff.school
@@ -123,6 +142,10 @@ def inscrire_staff(request):
         messages.error(request, "Vous devez d'abord créer ou rejoindre un établissement.")
         return redirect("portal:dashboard")
 
+    if not _etablissement_valide_requis(school_staff):
+        messages.warning(request, "Votre établissement est en attente de validation. Cette action sera disponible une fois validé.")
+        return redirect("portal:dashboard")
+
     school = school_staff.school
 
     if request.method == "POST":
@@ -151,4 +174,79 @@ def inscrire_staff(request):
     return render(request, "configuration/inscrire_staff.html", {
         "form": form,
         "school": school,
+    })
+
+
+# ============================================================
+#   VALIDATION DES ÉTABLISSEMENTS (réservé à l'administrateur général)
+# ============================================================
+
+@user_passes_test(_est_super_admin)
+def etablissements_en_attente(request):
+    etablissements = SchoolProfile.objects.filter(statut_validation="en_attente").order_by("-created_at")
+    return render(request, "configuration/etablissements_en_attente.html", {
+        "etablissements": etablissements,
+    })
+
+
+@user_passes_test(_est_super_admin)
+def valider_etablissement(request, pk):
+    school = get_object_or_404(SchoolProfile, pk=pk)
+    school.statut_validation = "valide"
+    school.actif = True
+    school.save()
+    messages.success(request, f"« {school.nom} » a été validé. Le directeur a maintenant accès complet.")
+    return redirect("configuration:etablissements_en_attente")
+
+
+@user_passes_test(_est_super_admin)
+def rejeter_etablissement(request, pk):
+    school = get_object_or_404(SchoolProfile, pk=pk)
+    school.statut_validation = "rejete"
+    school.actif = False
+    school.save()
+    messages.success(request, f"« {school.nom} » a été rejeté.")
+    return redirect("configuration:etablissements_en_attente")
+
+
+@user_passes_test(_est_super_admin)
+def creer_etablissement_direct(request):
+    """
+    Permet à l'administrateur général de créer directement un établissement
+    déjà validé, avec son directeur, sans passer par la validation.
+    """
+    if request.method == "POST":
+        form_ecole = SchoolProfileForm(request.POST, prefix="ecole")
+        form_directeur = InscriptionStaffForm(request.POST, prefix="directeur")
+
+        if form_ecole.is_valid() and form_directeur.is_valid():
+            school = form_ecole.save(commit=False)
+            school.statut_validation = "valide"
+            school.save()
+
+            role_directeur, _ = StaffRole.objects.get_or_create(
+                school=school,
+                nom="Directeur",
+                defaults={"ordre": 1}
+            )
+
+            user = form_directeur.save(commit=False)
+            user.role = "staff"
+            user.save()
+
+            SchoolStaff.objects.create(school=school, user=user, role=role_directeur)
+
+            messages.success(
+                request,
+                f"Établissement « {school.nom} » créé et validé. "
+                f"Identifiant du directeur : {user.username} — transmettez-lui le mot de passe choisi."
+            )
+            return redirect("configuration:etablissements_en_attente")
+    else:
+        form_ecole = SchoolProfileForm(prefix="ecole")
+        form_directeur = InscriptionStaffForm(prefix="directeur")
+
+    return render(request, "configuration/creer_etablissement_direct.html", {
+        "form_ecole": form_ecole,
+        "form_directeur": form_directeur,
     })

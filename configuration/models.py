@@ -550,3 +550,18 @@ class SchoolStaff(models.Model):
             nom = self.user.username
 
         return f"{nom} - {self.role}"
+
+# Ajout : statut de validation par l'administration générale
+SchoolProfile.add_to_class(
+    "statut_validation",
+    models.CharField(
+        max_length=20,
+        choices=(
+            ("en_attente", "En attente de validation"),
+            ("valide", "Validé"),
+            ("rejete", "Rejeté"),
+        ),
+        default="en_attente",
+        verbose_name="Statut de validation",
+    ),
+)

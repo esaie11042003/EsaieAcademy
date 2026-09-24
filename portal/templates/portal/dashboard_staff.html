@@ -11,6 +11,19 @@
         </div>
         <a href="{% url 'configuration:creer_etablissement' %}" class="btn btn-primary">Créer mon établissement</a>
 
+    {% elif etablissement_en_attente %}
+        <div class="alert alert-warning mt-4">
+            <strong>{{ school.nom }}</strong> a été créé avec succès, mais est actuellement <strong>en attente de validation</strong>
+            par l'administration générale de la plateforme. Vous aurez accès à la gestion complète (classes, enseignants,
+            élèves, administration...) dès que votre dossier sera validé.
+        </div>
+
+    {% elif etablissement_rejete %}
+        <div class="alert alert-danger mt-4">
+            La demande de création de <strong>{{ school.nom }}</strong> a été rejetée par l'administration générale.
+            Contactez l'assistance pour plus d'informations.
+        </div>
+
     {% else %}
 
         <div class="card mb-4 mt-4">
