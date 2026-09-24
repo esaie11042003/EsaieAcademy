@@ -1,0 +1,19 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h3>Supprimer « {{ admin_cible.get_full_name|default:admin_cible.username }} »</h3>
+            <div class="alert alert-danger">
+                Cette action est irréversible. Le compte et son accès administrateur seront supprimés définitivement.
+            </div>
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Confirmer la suppression</button>
+                <a href="{% url 'accounts:gerer_admins' %}" class="btn btn-outline-secondary">Annuler</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

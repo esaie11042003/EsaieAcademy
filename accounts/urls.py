@@ -19,4 +19,6 @@ urlpatterns = [
     path("admins/gerer/", views.gerer_admins, name="gerer_admins"),
     path("admins/inscrire/", views.inscrire_admin, name="inscrire_admin"),
     path("admins/<int:pk>/retirer/", views.retirer_admin, name="retirer_admin"),
+    path("admins/<int:pk>/basculer/", views.basculer_statut_admin, name="basculer_statut_admin"),
+    path("admins/<int:pk>/supprimer/", views.supprimer_admin, name="supprimer_admin"),
 ]
